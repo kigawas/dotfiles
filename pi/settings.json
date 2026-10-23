@@ -1,0 +1,19 @@
+{
+  "lastChangelogVersion": "1.4.0",
+  "theme": "dark",
+  "defaultProvider": "magpie",
+  "defaultModel": "anthropic/claude-haiku-5-5",
+  "defaultThinkingLevel": "xhigh",
+  "compaction": {
+    "modelOverrides": {
+      "magpie/anthropic/claude-haiku-5-5": {
+        "reserveTokens": 500000
+      }
+    }
+  },
+  "packages": [
+    "npm:pi-web-access@0.44.0",
+    "npm:pi-subagents@0.81.0",
+    "npm:pi-intercom@0.18.1"
+  ]
+}
