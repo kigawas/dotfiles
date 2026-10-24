@@ -2,7 +2,7 @@
   "lastChangelogVersion": "1.4.0",
   "theme": "dark",
   "defaultProvider": "magpie",
-  "defaultModel": "anthropic/claude-haiku-5-5",
+  "defaultModel": "anthropic/claude-opus-5-5",
   "defaultThinkingLevel": "xhigh",
   "cacheWarming": "streaming",
   "showCacheMissNotices": true,
