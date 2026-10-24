@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@0.0.83"],
+      "description": "Browser automation: open pages, read and click them, fill forms, run page scripts, take screenshots.",
+      "exposure": "deferred"
+    }
+  }
+}

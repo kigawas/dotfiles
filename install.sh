@@ -10,6 +10,10 @@
 #   agents/AGENTS.md     -> ~/.pi/agent/AGENTS.md
 #   skills/<name>/       -> ~/.agents/skills/<name>   (one link per skill;
 #                           other skills in that folder are left alone)
+#   commands/            -> ~/.claude/commands
+#   commands/            -> ~/.pi/agent/prompts
+#   pi/mcp.json          -> ~/.pi/agent/mcp.json
+#   pi/extensions/<file> -> ~/.pi/agent/extensions/<file>   (one link per file)
 #
 # Idempotent: a link that already points at the repo is left alone.
 # A file or folder that gets replaced is moved to ~/.dotfiles-backup/<timestamp>/
@@ -25,7 +29,7 @@ BACKED_UP=0
 case "${1:-}" in
   "") ;;
   --apply) APPLY=1 ;;
-  -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+  -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
   *) echo "unknown option: $1 (use --apply or no option)" >&2; exit 2 ;;
 esac
 
@@ -67,6 +71,15 @@ for skill_dir in "$REPO"/skills/*/; do
   [ -d "$skill_dir" ] || continue
   name="$(basename "$skill_dir")"
   link "${skill_dir%/}" "$HOME/.agents/skills/$name"
+done
+
+link "$REPO/commands" "$HOME/.claude/commands"
+link "$REPO/commands" "$HOME/.pi/agent/prompts"
+link "$REPO/pi/mcp.json" "$HOME/.pi/agent/mcp.json"
+
+for ext in "$REPO"/pi/extensions/*.ts; do
+  [ -f "$ext" ] || continue
+  link "$ext" "$HOME/.pi/agent/extensions/$(basename "$ext")"
 done
 
 if [ "$BACKED_UP" = 1 ]; then
