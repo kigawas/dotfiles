@@ -121,7 +121,10 @@ fixes, wrong for a refactor.
 6. **Verify findings at source before acting.** A reviewer can cite code that
    exists only on its own branch, or read a stale claim back as fact. Apply the
    same test to the fix you write in response; that is where the next round's
-   defect usually comes from.
+   defect usually comes from. **Fix the pattern, not the line**: a finding about
+   one place usually holds wherever the same construct appears (a sibling file,
+   another example, the same rule restated), so search the diff for every
+   occurrence before the next round.
 7. **Every fix is red first.** Write the test that fails on the current tree,
    watch it fail, then change production code. A finding fixed without one comes
    back next round as unpinned; keep the mutant the reviewer named as the
@@ -152,7 +155,9 @@ intent, the blast radius, the relevant ADRs and a ranked attack list. Ask for
 `SHIP` / `FIX-FIRST` / `REWORK`, findings ranked by severity with `file:line`
 evidence, and a separate FILE THIS list. On a later round, say which round it is
 and what earlier rounds found, and tell it to re-derive rather than grade the
-fixes: a rewritten claim is not a verified one.
+fixes: a rewritten claim is not a verified one. Also list what earlier rounds
+verified by running it, and ask it to re-run a check only where the text around
+it changed, so the round spends its budget on what moved.
 
 **Pin what it reads.** Give the hash of each file under review (`git rev-parse
 :<path>` for a staged blob, `git hash-object <file>` otherwise) and ask the

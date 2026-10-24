@@ -96,13 +96,27 @@ while you read, say so: your verdict is then about text that no longer exists.
 
 A guide, skill or ADR asserts facts about the code, and **those assertions are the
 attack surface**, not the prose. Verify each at source: `file:line` for code, the
-installed package for library behaviour, `gh` for issues and PRs. Every cited
-test name must exist verbatim in the file it is cited under; script the check.
+installed package for library behaviour, `gh` for issues and PRs. A claim about
+how a tool behaves (git, gh, a package manager, a shell) is settled by running
+it in a scratch directory under `/tmp`, deleted afterwards, not by memory or its
+docs. Every cited test name must exist verbatim in the file it is cited under;
+script the check.
 Every absolute (*never*, *cannot*, *always*, *only*) is a claim the code must hold
 or the sentence must qualify. Severity is what the claim would cost if a reader
 acted on it: a control described as stronger than it is, or a gap described as
 open when it is closed, is worse than no description, because the next reader
 trusts it. Skip rewordings that would merely read better.
+
+A document agents execute (a skill, an `AGENTS.md`) is followed literally, so
+its commands are claims too:
+
+- **Every command example obeys the document's own rules.** An example that
+  breaks a rule stated a few lines above is the one the agent copies.
+- **Every command stands alone.** Check each for state it assumes from an earlier
+  call, such as a working directory or an exported variable; an agent's shell
+  tool may start a fresh shell per call.
+- **A rule repeated across sibling files holds in each.** A fix applied to one
+  file and not its sibling leaves the two disagreeing.
 
 ## Attack checklist
 
