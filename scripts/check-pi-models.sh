@@ -10,6 +10,11 @@
 #                                              model. The current file is saved to
 #                                              ~/.dotfiles-backup first.
 #
+# The known-good copy is ~/.dotfiles-backup/models.json.good. Restoring it also
+# drops any model or price magpie has changed since that copy was saved, so
+# refresh it (cp -p ~/.pi/agent/models.json ~/.dotfiles-backup/models.json.good)
+# whenever this script reports ok after a magpie update.
+#
 # Restarting pi or starting a new session is needed to load the restored file.
 
 set -euo pipefail
@@ -51,7 +56,7 @@ RESTORE=""
 case "${1:-}" in
   "") ;;
   --restore) RESTORE="${2:?--restore needs a FILE}" ;;
-  -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+  -h|--help) sed -n '2,18p' "$0"; exit 0 ;;
   *) echo "unknown option: $1 (use --restore FILE or no option)" >&2; exit 2 ;;
 esac
 
@@ -68,6 +73,7 @@ done <<< "$MISSING"
 
 if [ -z "$RESTORE" ]; then
   echo "run with --restore FILE to replace it with a copy that sets the flag"
+  echo "(the known-good copy is $BACKUP_DIR/models.json.good)"
   exit 1
 fi
 
