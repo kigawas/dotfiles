@@ -4,6 +4,12 @@
   "defaultProvider": "magpie",
   "defaultModel": "anthropic/claude-opus-5-5",
   "defaultThinkingLevel": "xhigh",
+  "enabledModels": [
+    "magpie/anthropic/claude-opus-5-5",
+    "magpie/anthropic/claude-sonnet-5-5",
+    "magpie/anthropic/claude-fable-5-1",
+    "magpie/anthropic/claude-haiku-5-5"
+  ],
   "cacheWarming": "streaming",
   "showCacheMissNotices": true,
   "defaultTools": ["+grep"],
@@ -17,6 +23,18 @@
       }
     }
   },
+  "skills": [
+    "-skills/code-review/SKILL.md",
+    "-skills/find-skills/SKILL.md",
+    "-skills/git-guardrails-claude-code/SKILL.md",
+    "-skills/migrate-to-shoehorn/SKILL.md",
+    "-skills/prototype/SKILL.md",
+    "-skills/research/SKILL.md",
+    "-skills/resolving-merge-conflicts/SKILL.md",
+    "-skills/scaffold-exercises/SKILL.md",
+    "-skills/setup-pre-commit/SKILL.md",
+    "-skills/wizard/SKILL.md"
+  ],
   "packages": [
     "npm:pi-web-access@0.44.0",
     "npm:pi-subagents@0.81.0",
