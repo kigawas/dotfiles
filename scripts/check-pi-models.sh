@@ -18,8 +18,10 @@ MODELS="${HOME}/.pi/agent/models.json"
 BACKUP_DIR="${HOME}/.dotfiles-backup"
 PROVIDER="magpie"
 MODEL_IDS=(
-  "anthropic/claude-haiku-5-5"
   "anthropic/claude-opus-5-5"
+  "anthropic/claude-sonnet-5-5"
+  "anthropic/claude-fable-5-1"
+  "anthropic/claude-haiku-5-5"
 )
 
 # missing_flag FILE: print each model in MODEL_IDS that lacks the flag in FILE,
