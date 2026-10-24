@@ -11,6 +11,9 @@
     "modelOverrides": {
       "magpie/anthropic/claude-haiku-5-5": {
         "reserveTokens": 500000
+      },
+      "magpie/anthropic/claude-opus-5-5": {
+        "reserveTokens": 500000
       }
     }
   },
