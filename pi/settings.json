@@ -4,6 +4,9 @@
   "defaultProvider": "magpie",
   "defaultModel": "anthropic/claude-haiku-5-5",
   "defaultThinkingLevel": "xhigh",
+  "cacheWarming": "streaming",
+  "showCacheMissNotices": true,
+  "defaultTools": ["+grep"],
   "compaction": {
     "modelOverrides": {
       "magpie/anthropic/claude-haiku-5-5": {
