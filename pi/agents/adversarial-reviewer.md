@@ -4,7 +4,7 @@ description: Adversarial review of a diff before it ships. Use before committing
 advertise: true
 tools: read, grep, find, ls, bash
 model: magpie/anthropic/claude-opus-5-5
-thinking: xhigh
+thinking: high
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false

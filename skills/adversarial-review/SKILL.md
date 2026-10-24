@@ -27,8 +27,9 @@ never the problem. Scope discovered a round at a time is.
 
 `FIX → REVIEW-AND-FIX (two rounds) → PR`
 
-1. **FIX**: implement at the size set by loop rule 1, in a worktree cut from a
-   freshly fetched base, so the tree the reviewer reads stays put.
+1. **FIX**: implement at the size set by loop rule 1, on a branch cut by
+   [open-branch](../open-branch/SKILL.md). A worktree of its own keeps the tree
+   the reviewer reads from moving under it.
 2. **Round 1**: spawn the reviewer fresh with the full [prompt shape](#prompt-shape).
    Verify each finding at source (rule 6). Fix only the confirmed, in-scope ones,
    each red first (rule 7); out-of-scope findings become issues (rule 3).
@@ -85,9 +86,8 @@ fixes, wrong for a refactor.
 
 `CLEAN → READ-REVIEWER-COMMENT → DECIDE-NEXT-STEP`
 
-1. **CLEAN**: once the PR shows merged, remove the worktree, prune, and delete
-   the local branch, in that order. A branch that reads `gone` is a hint, not
-   proof the work landed; confirm against the merged PR first.
+1. **CLEAN**: [clear-branch](../clear-branch/SKILL.md). Confirm the work landed,
+   then remove the worktree, prune, and delete the local branch.
 2. **READ-REVIEWER-COMMENT**: reviews land after the merge too, from humans and
    other AI tools. Read all three streams above; `gh pr view <n> --comments`
    shows reviews and conversation, but not thread comments. When `gh` refuses on
