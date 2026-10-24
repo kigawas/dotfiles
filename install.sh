@@ -14,6 +14,8 @@
 #   commands/            -> ~/.pi/agent/prompts
 #   pi/mcp.json          -> ~/.pi/agent/mcp.json
 #   pi/extensions/<file> -> ~/.pi/agent/extensions/<file>   (one link per file)
+#   pi/agents/<file>     -> ~/.pi/agent/agents/<file>       (one link per file)
+#   claude/agents/<file> -> ~/.claude/agents/<file>         (one link per file)
 #
 # Idempotent: a link that already points at the repo is left alone.
 # A file or folder that gets replaced is moved to ~/.dotfiles-backup/<timestamp>/
@@ -29,7 +31,7 @@ BACKED_UP=0
 case "${1:-}" in
   "") ;;
   --apply) APPLY=1 ;;
-  -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+  -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
   *) echo "unknown option: $1 (use --apply or no option)" >&2; exit 2 ;;
 esac
 
@@ -80,6 +82,16 @@ link "$REPO/pi/mcp.json" "$HOME/.pi/agent/mcp.json"
 for ext in "$REPO"/pi/extensions/*.ts; do
   [ -f "$ext" ] || continue
   link "$ext" "$HOME/.pi/agent/extensions/$(basename "$ext")"
+done
+
+for agent in "$REPO"/pi/agents/*.md; do
+  [ -f "$agent" ] || continue
+  link "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
+done
+
+for agent in "$REPO"/claude/agents/*.md; do
+  [ -f "$agent" ] || continue
+  link "$agent" "$HOME/.claude/agents/$(basename "$agent")"
 done
 
 if [ "$BACKED_UP" = 1 ]; then
