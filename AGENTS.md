@@ -28,4 +28,5 @@ This repo holds Ryan's personal config: shared agent instructions, skills, pi se
 - Stage with explicit paths: `git add -- <path>`. Never use `git add -A`.
 - Commit messages use `[Tag]: summary`, such as `[Pi]`, `[Agents]`, or `[Scripts]`.
 - Don't push unless asked.
+- The remote is `kigawas/dotfiles`. Run `gh` as `kigawas`, without switching accounts: `GH_TOKEN=$(gh auth token --user kigawas) gh ...`.
 - Pin third-party pi packages to exact versions, and review their source before installing.
