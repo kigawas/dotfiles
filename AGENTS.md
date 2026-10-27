@@ -14,7 +14,8 @@ This repo holds Ryan's personal config: shared agent instructions, skills, pi se
 - `commands/`: slash commands shared by both tools. `install.sh` links the folder to `~/.claude/commands` and `~/.pi/agent/prompts`. Use only frontmatter and placeholders both read: `description`, `argument-hint`, `$ARGUMENTS`.
 - `pi/settings.json`: a copy of `~/.pi/agent/settings.json`. Nothing links it. When you change one, change the other and compare them. Its `skills` entries such as `-skills/wizard/SKILL.md` turn off skills from `~/.agents/skills/`, matching `skillOverrides` in `claude/settings.json`.
 - `pi/mcp.json`: user-level MCP servers, linked to `~/.pi/agent/mcp.json`. Pin each server's package version.
-- `pi/extensions/`: pi extensions, each file linked into `~/.pi/agent/extensions/`. Their tests are in `pi/extensions/tests/`, which `install.sh` doesn't link. After changing an extension, run `pi/extensions/tests/run.sh --mutants`, and also `run.sh --live` (about 5 minutes, a few cents) when the change touches how it talks to pi.
+- `pi/extensions/`: pi extensions, each file linked into `~/.pi/agent/extensions/`.
+- `loop`, `secret-guard` and `command-guard` come from the npm package `@gridport/pi-extensions`, pinned in `pi/settings.json`'s `packages`. Change them in its repo, `~/works/js/pi-extensions`. After it releases, move the pin in both settings files.
 - `.pi/settings.json`: project settings for this repo only.
 - `scripts/`: helper scripts.
 
