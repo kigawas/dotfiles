@@ -5,9 +5,12 @@ My setup for two coding agents, [pi](https://pi.dev) and [Claude Code](https://g
 ## Install
 
 ```bash
-./install.sh           # dry run: prints what it would link, changes nothing
-./install.sh --apply   # makes the links
+./install.sh              # dry run: prints what it would link, changes nothing
+./install.sh --apply      # makes the links
+./install.sh --apply pi   # only the links into ~/.pi/agent
 ```
+
+The scopes are `claude` (links into `~/.claude`), `pi` (into `~/.pi/agent`) and `misc` (the shared skills and the git config). Without one, `install.sh` runs all three.
 
 `install.sh` links files from this repo into `~/.claude`, `~/.pi/agent`, `~/.agents/skills` and `~/.config/git`. It leaves a link that already points here alone, and moves a file it would replace to `~/.dotfiles-backup/<timestamp>/` first. Run `./install.sh --help` for the full list of links.
 
