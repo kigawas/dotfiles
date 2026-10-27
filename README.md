@@ -9,7 +9,7 @@ My setup for two coding agents, [pi](https://pi.dev) and [Claude Code](https://g
 ./install.sh --apply   # makes the links
 ```
 
-`install.sh` links files from this repo into `~/.claude`, `~/.pi/agent` and `~/.agents/skills`. It leaves a link that already points here alone, and moves a file it would replace to `~/.dotfiles-backup/<timestamp>/` first. Run `./install.sh --help` for the full list of links.
+`install.sh` links files from this repo into `~/.claude`, `~/.pi/agent`, `~/.agents/skills` and `~/.config/git`. It leaves a link that already points here alone, and moves a file it would replace to `~/.dotfiles-backup/<timestamp>/` first. Run `./install.sh --help` for the full list of links.
 
 The settings files aren't linked. `claude/settings.json` and `pi/settings.json` are copies, kept in step with `~/.claude/settings.json` and `~/.pi/agent/settings.json` by hand.
 
@@ -24,6 +24,7 @@ The settings files aren't linked. `claude/settings.json` and `pi/settings.json` 
 | `pi/extensions/` | `zsh-bang` runs your own `!` commands in zsh with `~/.zshrc`; `idle-compact` compacts a session before its cache expires. |
 | `pi/mcp.json` | pi's MCP servers. |
 | `claude/settings.json`, `pi/settings.json` | The settings copies. |
+| `git/config` | Global git settings, linked as `~/.config/git/config`: the `lg` alias and the allowed-signers file for SSH signatures. |
 | `agents/skill-lock.json` | The `npx skills` record of installed skills and their sources. |
 | `scripts/` | `git-sign.sh` sets up SSH commit signing in a repo; `check-pi-models.sh` checks pi's `models.json` after a provider update. |
 

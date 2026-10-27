@@ -16,6 +16,7 @@ This repo holds Ryan's personal config: shared agent instructions, skills, pi se
 - `pi/mcp.json`: user-level MCP servers, linked to `~/.pi/agent/mcp.json`. Pin each server's package version.
 - `pi/extensions/`: pi extensions, each file linked into `~/.pi/agent/extensions/`.
 - `loop`, `secret-guard` and `command-guard` come from the npm package `@gridport/pi-extensions`, pinned in `pi/settings.json`'s `packages`. Change them in its repo, `~/works/js/pi-extensions`. After it releases, move the pin in both settings files.
+- `git/config`: global git settings, linked to `~/.config/git/config`, which git reads before `~/.gitconfig`. Settings that belong to one machine, such as user and credential helpers, stay in `~/.gitconfig`.
 - `.pi/settings.json`: project settings for this repo only.
 - `scripts/`: helper scripts.
 

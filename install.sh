@@ -16,6 +16,7 @@
 #   pi/extensions/<file> -> ~/.pi/agent/extensions/<file>   (one link per file)
 #   pi/agents/<file>     -> ~/.pi/agent/agents/<file>       (one link per file)
 #   claude/agents/<file> -> ~/.claude/agents/<file>         (one link per file)
+#   git/config           -> ~/.config/git/config
 #
 # Idempotent: a link that already points at the repo is left alone.
 # A file or folder that gets replaced is moved to ~/.dotfiles-backup/<timestamp>/
@@ -31,7 +32,7 @@ BACKED_UP=0
 case "${1:-}" in
   "") ;;
   --apply) APPLY=1 ;;
-  -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+  -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
   *) echo "unknown option: $1 (use --apply or no option)" >&2; exit 2 ;;
 esac
 
@@ -93,6 +94,8 @@ for agent in "$REPO"/claude/agents/*.md; do
   [ -f "$agent" ] || continue
   link "$agent" "$HOME/.claude/agents/$(basename "$agent")"
 done
+
+link "$REPO/git/config" "$HOME/.config/git/config"
 
 if [ "$BACKED_UP" = 1 ]; then
   echo

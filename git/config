@@ -1,0 +1,8 @@
+# Global git settings. install.sh links this file to ~/.config/git/config,
+# which git reads before ~/.gitconfig. Settings that belong to one machine,
+# such as user and credential helpers, stay in ~/.gitconfig.
+
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
