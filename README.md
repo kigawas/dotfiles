@@ -28,6 +28,7 @@ The settings files aren't linked. `claude/settings.json` and `pi/settings.json` 
 | `pi/mcp.json` | pi's MCP servers. |
 | `claude/settings.json`, `pi/settings.json` | The settings copies. |
 | `git/config` | Global git settings, linked as `~/.config/git/config`: the `lg` alias and the allowed-signers file for SSH signatures. |
+| `git/ignore` | Global gitignore, linked as `~/.config/git/ignore`: `.DS_Store`, Claude Code's local settings, logs and `.env` files. |
 | `agents/skill-lock.json` | The `npx skills` record of installed skills and their sources. |
 | `scripts/` | `git-sign.sh` sets up SSH commit signing in a repo; `check-pi-models.sh` checks pi's `models.json` after a provider update. |
 

@@ -1,0 +1,15 @@
+# Global gitignore: files no repo should commit, whatever its language.
+# install.sh links this file to ~/.config/git/ignore, which git reads when
+# core.excludesFile is unset. Language and build output, such as
+# __pycache__/ or dist/, belong in each repo's own .gitignore.
+
+# macOS folder metadata
+.DS_Store
+
+# Claude Code's personal settings for a project
+**/.claude/settings.local.json
+
+# Logs, and environment files, which can hold secrets. .env.example and
+# .env.local don't match.
+*.log
+*.env

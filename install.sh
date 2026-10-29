@@ -24,6 +24,7 @@
 #     skills/<name>/       -> ~/.agents/skills/<name>   (one link per skill; both
 #                             tools read them, and other skills there are left alone)
 #     git/config           -> ~/.config/git/config
+#     git/ignore           -> ~/.config/git/ignore
 #
 # Idempotent: a link that already points at the repo is left alone.
 # A file or folder that gets replaced is moved to ~/.dotfiles-backup/<timestamp>/
@@ -123,6 +124,7 @@ if in_scope misc; then
     link "${skill_dir%/}" "$HOME/.agents/skills/$(basename "$skill_dir")"
   done
   link "$REPO/git/config" "$HOME/.config/git/config"
+  link "$REPO/git/ignore" "$HOME/.config/git/ignore"
 fi
 
 if [ "$BACKED_UP" = 1 ]; then
