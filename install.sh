@@ -12,6 +12,8 @@
 #     agents/AGENTS.md     -> ~/.claude/CLAUDE.md
 #     commands/            -> ~/.claude/commands
 #     claude/agents/<file> -> ~/.claude/agents/<file>         (one link per file)
+#     ~/.agents/skills/<name> -> ~/.claude/skills/<name>      (only CLAUDE_SKILLS;
+#                             relative, as npx skills links them for Claude Code)
 #   pi: links into ~/.pi/agent
 #     agents/AGENTS.md     -> ~/.pi/agent/AGENTS.md
 #     commands/            -> ~/.pi/agent/prompts
@@ -30,6 +32,9 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")" && pwd -P)"
+# Skills Claude Code also reads as personal ones. It prefers a personal skill to
+# a repo's own copy of the same name, so see AGENTS.md before adding one here.
+CLAUDE_SKILLS=(writing-tests)
 BACKUP_ROOT="${HOME}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 APPLY=0
 BACKED_UP=0
@@ -92,6 +97,9 @@ if in_scope claude; then
   for agent in "$REPO"/claude/agents/*.md; do
     [ -f "$agent" ] || continue
     link "$agent" "$HOME/.claude/agents/$(basename "$agent")"
+  done
+  for skill in "${CLAUDE_SKILLS[@]}"; do
+    link "../../.agents/skills/$skill" "$HOME/.claude/skills/$skill"
   done
 fi
 
