@@ -1,11 +1,17 @@
 ---
-name: tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor" or "red again", or wants integration tests.
+name: writing-tests
+description: Writing tests through the red, green, red again, green again loop. Use when building features or fixing bugs test-first (TDD), writing tests for existing code, pinning a known defect, or closing a coverage gap.
 ---
 
-# Test-Driven Development
+# Writing tests
 
-TDD is a four-phase loop: **red**, **green**, **red again**, **green again**. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the loop itself. Every section applies on every cycle: consult them before and during the loop, not after.
+Every test goes through a four-phase loop: **red**, **green**, **red again**, **green again**. Red again is the phase that proves a test can fail: take the behaviour out and watch the test go red. This skill is the reference for running the loop and for writing tests worth keeping. Every section applies on every cycle: consult them before and during the loop, not after.
+
+Where the loop starts depends on the work:
+
+- **New behaviour** starts at red: the test comes before the code, as in test-driven development (TDD).
+- **A bug** starts at red on the reported failure: follow [bug-fixes.md](bug-fixes.md). It also covers a bug whose fix isn't yours to make, pinned as a **known defect**.
+- **Existing behaviour** (tests for code that already works, before a refactor, or to close a coverage gap) starts at green: see "Pinning existing behaviour".
 
 When exploring the codebase, read `GLOSSARY.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
 
@@ -30,7 +36,7 @@ When the shape of that interface is itself in question (how deep the module is, 
 ## Anti-patterns
 
 - **Implementation-coupled**: mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec. Subtler forms pass by construction too: a constant imported from the module it should check, a hand-copied list beside the one it guards, the same normalisation applied to both sides of a comparison, a fake that shares the implementation's logic, a test parametrised over the collection it guards (it loses the case along with the item).
+- **Tautological**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec, a reference implementation's real output. Subtler forms pass by construction too: a constant imported from the module it should check, a hand-copied list beside the one it guards, the same normalisation applied to both sides of a comparison, a fake that shares the implementation's logic, a test parametrised over the collection it guards (it loses the case along with the item).
 - **Horizontal slicing**: writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead: one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
 
 ## The loop
@@ -47,9 +53,23 @@ One slice per cycle: one seam, one test, one minimal implementation. Each phase 
 
 When a slice adds several tests, repeat red again and green again one break at a time, until every new test has gone red.
 
-Throughout the loop:
+**Broken code runs for real.** Before a break, ask what the broken code will write: against a shared database or a live service, it writes real rows. Break only code whose writes stay yours: a test database, a fake, the test's own records. Where the code can't be broken safely, or isn't yours to edit, change the test's expected value instead, and say so: that proves the assertion runs and is exact, not that it catches the loss.
+
+In Python, run red again with `PYTHONDONTWRITEBYTECODE=1`, or clear `__pycache__` after the restore. A break of the same length, restored within the same second, otherwise keeps running from the bytecode cache.
+
+## Pinning existing behaviour
+
+A test for code that already works passes the moment it is written. It starts at green, and red again is its only proof that it can fail.
+
+1. **Green on exact values.** Assert the exact values, errors and state today's code produces. Read each one before you pin it: a value that looks wrong is a bug, so pin it by [bug-fixes.md](bug-fixes.md) instead.
+2. **Red again and green again**, as in the loop: break the behaviour the test pins, watch the test fail on its assertion, then restore.
+
+## Throughout
 
 - **Read the test count on every run.** Count failed and passed tests, not failed files or the exit code. A broken import or a missing service fails a whole file, stops collection, skips tests or runs none, so the exit code can read red or green while no test ran. The one such error that counts as red is the import of the new symbol, in its first red.
+- **Compare names, not counts.** When one run is measured against another (before and after a change, a branch against its base), compare which tests fail, not how many: a change can fix three and break two. Run the base fresh, in a throwaway `git worktree add --detach <path> <base>`. A list of failures saved from an earlier run is no baseline, since flaky tests come and go.
+- **Fix the code, not the test.** To turn a run green, change the code. Change an existing assertion only when the behaviour it pins is meant to change, and say why in the commit message. A test copied from upstream or a reference implementation stays as it is; add a new test beside it.
+- **Pin before you change.** Before changing or refactoring code, check that tests pin the behaviour that must survive. Where none does, pin it first.
 - **Refactoring is not part of the loop.** Do it once the slice is green again, as its own change, with the suite green before and after.
 
 ## After the green
@@ -62,6 +82,7 @@ Red again can't show that the test pins the right thing. Before calling the slic
 - **Every outcome, not the boundary.** For loops and concurrency, assert each result. A limit test that checks only that call 11 is refused misses a limit that fires at call 3: assert calls 1 to 10 pass too. For concurrent calls, assert the exact number accepted and the reason for every refusal.
 - **The arguments, not the call.** Where a mock stands in for a system boundary ([mocking.md](mocking.md)), assert what it was called with: "was called" passes when the argument is wrong.
 - **The wiring.** A test on a helper doesn't prove the decorator, middleware or provider in front of it applies the helper. Propose one test through the real entry point as a seam.
+- **The changed lines are covered.** Run coverage with branches and read it for the lines the change touched. A changed line no test reaches is untested, and a drop in coverage counts as red. Reach each line through a seam: a line no seam reaches is a seam question, or dead code.
 
 ## When the seam is hard to reach
 

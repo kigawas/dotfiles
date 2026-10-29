@@ -21,7 +21,7 @@ The settings files aren't linked. `claude/settings.json` and `pi/settings.json` 
 | Path | What |
 | --- | --- |
 | `agents/AGENTS.md` | Instructions both agents read, linked as `~/.claude/CLAUDE.md` and `~/.pi/agent/AGENTS.md`. |
-| `skills/` | Skills: adversarial review, opening and clearing branches, working your own queue or reviewing others' PRs on a recurring trigger, TDD, codebase design, domain modeling, grilling a plan, and writing for agents. |
+| `skills/` | Skills: adversarial review, opening and clearing branches, working your own queue or reviewing others' PRs on a recurring trigger, writing tests, codebase design, domain modeling, grilling a plan, and writing for agents. |
 | `commands/` | Slash commands both agents read: `/commit`, `/ship`, `/merged`, `/fold`, `/clear-comments`. |
 | `claude/agents/`, `pi/agents/` | An adversarial-reviewer subagent, one file per tool. |
 | `pi/extensions/` | `zsh-bang` runs your own `!` commands in zsh with `~/.zshrc`; `idle-compact` compacts a session before its cache expires. |

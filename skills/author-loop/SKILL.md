@@ -129,7 +129,7 @@ services, and it does not attach to the PR as a check.
 
 ## WORK, and what a firing may not decide
 
-One issue or bundle at a time: [tdd](../tdd/SKILL.md), then the
+One issue or bundle at a time: [writing-tests](../writing-tests/SKILL.md), then the
 [adversarial review](../adversarial-review/SKILL.md), at the round budget
 `AGENTS.md` sets for autonomous work. The loop adds these rules.
 

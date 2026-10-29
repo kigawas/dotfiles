@@ -8,8 +8,8 @@ These skills come from [mattpocock/skills](https://github.com/mattpocock/skills)
 | `skills/domain-modeling/` | `skills/engineering/domain-modeling/` | unchanged |
 | `skills/grilling/` | `skills/productivity/grilling/` | unchanged |
 | `skills/improve-codebase-architecture/` | `skills/engineering/improve-codebase-architecture/` | unchanged |
-| `skills/tdd/` | `skills/engineering/tdd/` | modified: `SKILL.md` is edited, and `bug-fixes.md` is new |
 | `skills/writing-for-agents/` | `skills/productivity/writing-for-agents/` | unchanged |
+| `skills/writing-tests/` | `skills/engineering/tdd/` | modified: renamed from `tdd`, `SKILL.md` is rewritten, and `bug-fixes.md` is new |
 
 ```text
 MIT License
