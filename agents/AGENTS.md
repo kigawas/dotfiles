@@ -17,6 +17,10 @@
 
 - When compacting, keep important discussion and progress. Discard mechanical data, such as file-read output.
 
+## Memory
+
+- If your tool keeps a memory across sessions, record progress there after each checkpoint, such as a commit, a push, a merged PR or a finished plan step. Record what's done, what's next and any open decision. Update the existing progress entry rather than adding another.
+
 ## GitHub
 
 - Different GitHub accounts own different repos. Before writing an issue or comment to a **public** repo with `gh`, ask the user to confirm which GitHub account to use, and save the answer in the project's instruction file (`AGENTS.md` or `CLAUDE.md`). Private repos need no confirmation, since GitHub limits access to them.
@@ -29,3 +33,4 @@
 ## Sessions
 
 - By default, send messages to the session that belongs to the same repo. Ask the user when the session name is ambiguous.
+- Save session names and IDs to memory: this session's once it has a name, and each peer's when you first message it. Names repeat across repos, so address a known peer by its ID.
