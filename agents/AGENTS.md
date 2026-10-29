@@ -19,7 +19,7 @@
 
 ## Memory
 
-- If your tool keeps a memory across sessions, record progress there after each checkpoint, such as a commit, a push, a merged PR or a finished plan step. Record what's done, what's next and any open decision. Update the existing progress entry rather than adding another.
+- If your tool keeps a memory across sessions, record progress there at each milestone a later session would resume from, such as a merged PR or a finished plan step, and before you switch to other work. Record what's done, what's next and any open decision. Update the existing progress entry rather than adding another.
 
 ## GitHub
 
