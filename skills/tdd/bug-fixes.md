@@ -1,8 +1,8 @@
 # Fixing a bug test-first
 
-The loop in [SKILL.md](SKILL.md), plus two checks a feature does not need: the
-**revert-check** proves the test catches the bug, and the **silent-pass sweep**
-finds tests that were passing because of it.
+The loop in [SKILL.md](SKILL.md), with the bug as the behaviour: red reproduces
+it, and red again puts it back. One check a feature does not need, the
+**silent-pass sweep**, finds tests that were passing because of the bug.
 
 1. **Reproduce where the misbehaviour surfaces**, not where the broken line is.
    A button enabled when it should be disabled is a component test, even when
@@ -11,17 +11,9 @@ finds tests that were passing because of it.
    describes: an error response fails on the error, a wrong total fails on the
    total. A test that fails for some other reason is not a reproduction.
 3. **Make the smallest fix** that turns it green.
-4. **Revert-check.** Prove the test catches the bug:
-   1. Stage the files the fix touched, whole: `git add -- <fixed files>`.
-      Then `git diff -- <fixed files>` prints nothing. The restore below
-      copies those files back from the index and discards every unstaged
-      change in them, the fix or anyone else's work alike. Staging whole
-      files can stage other work in them too; leave it out of the commit.
-   2. Put the bug back with the editor and run the test: it fails as it did
-      when you reproduced the bug. If it passes, check that `git diff` shows
-      the bug back before you doubt the test.
-   3. Restore with `git checkout -- <fixed files>`. `git diff -- <fixed files>`
-      prints nothing again, and the test passes.
+4. **Red again, then green again**, by the steps in [SKILL.md](SKILL.md): put
+   the bug back, and the test fails as it did when you reproduced the bug.
+   Then restore the fix, and the test passes.
 5. **Silent-pass sweep.** Run the whole suite. A fix that tightens a check (a
    guard that always passed, a validation that never fired) breaks the tests
    that relied on the slack. Change their inputs to fit the corrected

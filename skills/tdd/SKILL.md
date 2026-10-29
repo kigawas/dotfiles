@@ -1,11 +1,11 @@
 ---
 name: tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor" or "red again", or wants integration tests.
 ---
 
 # Test-Driven Development
 
-TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle: consult them before and during the loop, not after.
+TDD is a four-phase loop: **red**, **green**, **red again**, **green again**. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the loop itself. Every section applies on every cycle: consult them before and during the loop, not after.
 
 When exploring the codebase, read `GLOSSARY.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
 
@@ -33,17 +33,28 @@ When the shape of that interface is itself in question (how deep the module is, 
 - **Tautological**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec. Subtler forms pass by construction too: a constant imported from the module it should check, a hand-copied list beside the one it guards, the same normalisation applied to both sides of a comparison, a fake that shares the implementation's logic, a test parametrised over the collection it guards (it loses the case along with the item).
 - **Horizontal slicing**: writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead: one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
 
-## Rules of the loop
+## The loop
 
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
-- **Red for the right reason.** The test fails on the behaviour it pins: the new symbol or argument the code lacks, the assertion that doesn't match yet, or, for a bug, the reported error. A failure in the test's own setup (an unrelated import, a missing fixture or service, a skip) is not red.
+One slice per cycle: one seam, one test, one minimal implementation. Each phase ends on a run of the test.
+
+1. **Red.** Write the failing test first. It fails for the right reason, on the behaviour it pins: the new symbol or argument the code lacks, the assertion that doesn't match yet, or, for a bug, the reported error. A failure in the test's own setup (an unrelated import, a missing fixture or service, a skip) is not red.
+2. **Green.** Write only enough code to pass it. Don't anticipate future tests or add speculative features.
+3. **Red again.** Take the behaviour back out and watch the test fail. Green proves only that the test passes; red again proves it catches the behaviour's loss.
+   1. Stage the files the change touched, whole: `git add -- <changed files>`. Then `git diff -- <changed files>` prints nothing. The restore in green again copies those files back from the index and discards every unstaged change in them, the change or anyone else's work alike. Staging whole files can stage other work in them too; leave it out of the commit.
+   2. Break the behaviour with the editor: revert the production change, or, for a bug, put the bug back. When red was the missing symbol, keep the symbol and break what it does (return the old value, skip the new branch), so the test fails on its assertion this time, not on the import.
+   3. Run the test: it fails on its assertion, for a bug as it did at red. If it passes, check that `git diff` shows the break before you doubt the test.
+4. **Green again.** Restore with `git checkout -- <changed files>`. `git diff -- <changed files>` prints nothing again, and the test passes.
+
+When a slice adds several tests, repeat red again and green again one break at a time, until every new test has gone red.
+
+Throughout the loop:
+
 - **Read the test count on every run.** Count failed and passed tests, not failed files or the exit code. A broken import or a missing service fails a whole file, stops collection, skips tests or runs none, so the exit code can read red or green while no test ran. The one such error that counts as red is the import of the new symbol, in its first red.
-- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the loop.** Do it once the slice is green, as its own change, with the suite green before and after.
+- **Refactoring is not part of the loop.** Do it once the slice is green again, as its own change, with the suite green before and after.
 
 ## After the green
 
-A passing test proves only that it passes. Before calling the slice done, run the whole suite, then attack the test:
+Red again can't show that the test pins the right thing. Before calling the slice done, run the whole suite, then attack the test. A check that changes the test sends it through red again and green again once more:
 
 - **The first gate to fire is the target.** Set up enough valid state that every earlier check passes. A "refused: insufficient funds" test against an account that doesn't exist passes on the wrong refusal.
 - **The assertion is specific.** Assert the exact error, value and state the behaviour produces. "It raised" or "an error is present" passes on any failure.
