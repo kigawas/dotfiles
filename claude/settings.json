@@ -5,16 +5,7 @@
   },
   "model": "opus",
   "skillOverrides": {
-    "code-review": "off",
-    "find-skills": "off",
-    "git-guardrails-claude-code": "off",
-    "migrate-to-shoehorn": "off",
-    "prototype": "off",
-    "research": "off",
-    "resolving-merge-conflicts": "off",
-    "scaffold-exercises": "off",
-    "setup-pre-commit": "off",
-    "wizard": "off"
+    "code-review": "off"
   },
   "hooks": {
     "PermissionRequest": [
@@ -126,10 +117,11 @@
     },
     "claude-opus-5-5": {
       "effortLevel": "xhigh",
-      "autoCompactWindow": 500000
+      "autoCompactWindow": 400000
     },
     "claude-haiku-5-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "xhigh",
+      "autoCompactWindow": 400000
     }
   },
   "statusLine": {

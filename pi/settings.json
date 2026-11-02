@@ -16,24 +16,15 @@
   "compaction": {
     "modelOverrides": {
       "magpie/anthropic/claude-haiku-5-5": {
-        "reserveTokens": 500000
+        "reserveTokens": 600000
       },
       "magpie/anthropic/claude-opus-5-5": {
-        "reserveTokens": 500000
+        "reserveTokens": 600000
       }
     }
   },
   "skills": [
-    "-skills/code-review/SKILL.md",
-    "-skills/find-skills/SKILL.md",
-    "-skills/git-guardrails-claude-code/SKILL.md",
-    "-skills/migrate-to-shoehorn/SKILL.md",
-    "-skills/prototype/SKILL.md",
-    "-skills/research/SKILL.md",
-    "-skills/resolving-merge-conflicts/SKILL.md",
-    "-skills/scaffold-exercises/SKILL.md",
-    "-skills/setup-pre-commit/SKILL.md",
-    "-skills/wizard/SKILL.md"
+    "-skills/code-review/SKILL.md"
   ],
   "packages": [
     "npm:pi-web-access@0.44.0",
