@@ -8,6 +8,8 @@
 
 - Change existing files with a targeted edit tool that replaces exact text. Use a whole-file write tool only for new files or full rewrites.
 - Don't change text files with Python, sed, or other scripts, so each change shows as a reviewable diff. Exception: non-text or malformed text files.
+- After a compaction, read a file again before you edit it. The earlier read is no longer in your context, and some edit tools refuse a file you haven't read.
+- Remove a folder by its literal path, such as `rm -rf build/`. Don't build the path from a shell variable: if it's empty, the command can delete far more than you meant.
 
 ## Git
 
