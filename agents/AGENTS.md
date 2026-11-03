@@ -14,6 +14,7 @@
 ## Git
 
 - Stage explicit file paths with `git add <path>`. Don't use `git add -A`, which stages unrelated in-flight changes.
+- Use semantic branch names that say what the branch changes, such as `feat/csv-export` or `fix/login-redirect`, not generated or random ones.
 
 ## Compaction
 

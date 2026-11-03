@@ -30,7 +30,7 @@ The settings files aren't linked. `claude/settings.json` and `pi/settings.json` 
 | `git/config` | Global git settings, linked as `~/.config/git/config`: the `lg` alias and the allowed-signers file for SSH signatures. |
 | `git/ignore` | Global gitignore, linked as `~/.config/git/ignore`: `.DS_Store`, Claude Code's local settings, logs and `.env` files. |
 | `agents/skill-lock.json` | The `npx skills` record of installed skills and their sources. |
-| `scripts/` | `git-sign.sh` sets up SSH commit signing in a repo; `check-pi-models.sh` checks pi's `models.json` after a provider update. |
+| `scripts/` | `git-sign.sh` sets up SSH commit signing in a repo; `check-pi-models.sh` checks pi's `models.json` after a provider update; `mobile-setup.sh` is the setup script for an Android cloud environment: it links these dotfiles and installs the Android SDK and Kotlin. |
 
 pi's `loop`, `secret-guard` and `command-guard` extensions are a separate package, [`@gridport/pi-extensions`](https://github.com/gridport/pi-extensions), pinned in `pi/settings.json`.
 
