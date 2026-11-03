@@ -5,10 +5,12 @@ description: Run a fix → adversarial-review → re-fix loop that converges. Us
 
 # Adversarial review loop
 
-This skill is the loop *around* a review. What the reviewer does (method, attack
-checklist, verdicts, output contract) is [REVIEWER.md](REVIEWER.md), shared by
-every runtime. The reviewer you spawn has to be running that contract, or the
-verdicts below do not mean what this skill says.
+This skill is the loop *around* a review. What the reviewer does (method,
+verdicts, output contract) is [REVIEWER.md](REVIEWER.md), shared by every
+runtime. Each kind of change adds a scope file with its attack checklist:
+[backend](backend.md), [frontend](frontend.md), [mobile](mobile.md) and
+[writing](writing.md). The reviewer you spawn has to be running that contract,
+or the verdicts below do not mean what this skill says.
 
 The repository's `AGENTS.md` (or `CLAUDE.md`) owns its policy: the gates to run,
 whose word commits, pushes and opens a PR, and the round budget for autonomous
@@ -151,11 +153,13 @@ what a reader would do.
 ## Prompt shape
 
 Give the reviewer the diff (`git diff --cached` or a ref range), a one-paragraph
-intent, the blast radius, the relevant ADRs and a ranked attack list. Ask for
-`SHIP` / `FIX-FIRST` / `REWORK`, findings ranked by severity with `file:line`
-evidence, and a separate FILE THIS list. On a later round, say which round it is
-and what earlier rounds found, and tell it to re-derive rather than grade the
-fixes: a rewritten claim is not a verified one. Also list what earlier rounds
+intent, the blast radius, the scope files to read (a diff that spans backend and
+frontend names both), the relevant ADRs, what you already ran with its counts,
+and a ranked attack list. Ask for `SHIP` / `FIX-FIRST` / `REWORK`, findings
+ranked by severity with `file:line` evidence, and a separate FILE THIS list. On
+a later round, say which round it is and what earlier rounds found, and tell it
+to re-derive rather than grade the fixes: a rewritten claim is not a verified
+one. Also list what earlier rounds
 verified by running it, and ask it to re-run a check only where the text around
 it changed, so the round spends its budget on what moved.
 
@@ -166,6 +170,12 @@ through the author's own edit, turns its verdict into one about text nobody read
 
 **When the diff is documentation**, point the reviewer at the claims to verify,
 one by one, and tell it to skip rewordings that would merely read better.
+
+**Running rules live in the repository's review notes**: how to start the
+environment, how to run things, and what to leave alone, such as a shared build,
+a shared stack, a device or the user's own files. Every review reads them there.
+Where the notes lack a rule the review needs, put it in the prompt and add it to
+the notes, so the next prompt need not carry it.
 
 ### Where the reviewer comes from
 
@@ -178,10 +188,12 @@ one by one, and tell it to skip rewordings that would merely read better.
   the diff to review in the prompt:
 
   ```bash
-  { cat ~/.agents/skills/adversarial-review/REVIEWER.md review-context.md
+  { cat ~/.agents/skills/adversarial-review/REVIEWER.md \
+        ~/.agents/skills/adversarial-review/backend.md review-context.md
     echo "Review the diff from: git diff origin/main...HEAD"; } | codex review -
   ```
 
-  `review-context.md` holds the intent, blast radius, ADRs and attack list.
-  Without it the reviewer cannot tell an out-of-scope discovery from an in-scope
-  defect, which is rule 2 failing before the review starts.
+  Put each scope file the diff needs after REVIEWER.md; `backend.md` above is
+  one example. `review-context.md` holds the intent, blast radius, ADRs and
+  attack list. Without it the reviewer cannot tell an out-of-scope discovery
+  from an in-scope defect, which is rule 2 failing before the review starts.
