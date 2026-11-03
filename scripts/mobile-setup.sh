@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 # Setup script for the Mobile cloud environment.
 #
-# Installs the Android SDK (command-line tools, platform-tools, platform 37.0,
-# build-tools 36.0.0) into /opt/android-sdk and the Kotlin compiler into
-# /opt/kotlinc, and links the dotfiles. Every step checks what is already in
+# Links the dotfiles, then installs the Android SDK (command-line tools,
+# platform-tools, platform 37.0, build-tools 36.0.0) into /opt/android-sdk and
+# the Kotlin compiler into /opt/kotlinc. Every step checks what is already in
 # place, so running it again is safe.
 set -euo pipefail
+
+# Dotfiles
+if [ ! -d /home/user/dotfiles/.git ]; then
+  git clone --depth 1 https://github.com/kigawas/dotfiles /home/user/dotfiles
+fi
+/home/user/dotfiles/install.sh --apply
 
 CMDLINE_TOOLS_BUILD=16111833 # cmdline-tools 23.0
 CMDLINE_TOOLS_SHA256=0877a1d048fe4a24efe2eff536ca4223f7adeb58648bb81909d33c446918cfa8
@@ -26,12 +32,6 @@ download() {
   curl -fsSL --retry 3 -A "$UA" -o "$3" "$1"
   echo "$2  $3" | sha256sum -c -
 }
-
-# Dotfiles
-if [ ! -d /home/user/dotfiles/.git ]; then
-  git clone --depth 1 https://github.com/kigawas/dotfiles /home/user/dotfiles
-fi
-/home/user/dotfiles/install.sh --apply
 
 # Android command-line tools
 if ! grep -qs '^Pkg.Revision=23.0$' /opt/android-sdk/cmdline-tools/latest/source.properties; then
