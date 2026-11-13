@@ -35,7 +35,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "$0")" && pwd -P)"
 # Skills Claude Code also reads as personal ones. It prefers a personal skill to
 # a repo's own copy of the same name, so see AGENTS.md before adding one here.
-CLAUDE_SKILLS=(writing-tests)
+CLAUDE_SKILLS=(pr writing-tests)
 BACKUP_ROOT="${HOME}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 APPLY=0
 BACKED_UP=0

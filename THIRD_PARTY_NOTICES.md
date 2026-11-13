@@ -8,6 +8,7 @@ These skills come from [mattpocock/skills](https://github.com/mattpocock/skills)
 | `skills/domain-modeling/` | `skills/engineering/domain-modeling/` | unchanged |
 | `skills/grilling/` | `skills/productivity/grilling/` | unchanged |
 | `skills/improve-codebase-architecture/` | `skills/engineering/improve-codebase-architecture/` | unchanged |
+| `skills/pr/` | `skills/engineering/pr/` | unchanged |
 | `skills/writing-for-agents/` | `skills/productivity/writing-for-agents/` | unchanged |
 | `skills/writing-tests/` | `skills/engineering/tdd/` | modified: renamed from `tdd`, `SKILL.md` is rewritten, and `bug-fixes.md` is new |
 
@@ -33,4 +34,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
+
+`skills/pr/`'s Summary section comes from the `show-me` skill in [humanlayer/skills](https://github.com/humanlayer/skills), at the path its `SKILL.md` frontmatter credits. (`CREDITS.md` links `humanlayer/humanlayer`, which holds a different, Apache-2.0 copy.) That repository is under the same MIT License, reproduced above, with this copyright line:
+
+```text
+Copyright (c) 2026 HumanLayer
 ```
