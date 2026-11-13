@@ -16,13 +16,15 @@ package manager, a shell) is settled by running it in a scratch directory under
 exist verbatim in the file it is cited under; script the check.
 
 - **Sources**: read each source at the cited place, not a summary, a search
-  snippet or memory. Use the repository's local copies first, then the web: your
-  web tools, or `curl` with a browser User-Agent. Name the edition, page or URL
-  you read.
+  snippet or memory. Use the repository's local copies first, then the web: a
+  search tool, or the URL the citation gives, to find the page, then its own text
+  through `curl` with a browser User-Agent, since a fetch tool that answers
+  through a model returns a summary. Name the edition, page or URL you read.
 - **Quotations**: word for word against the original, with every omission marked
   and punctuation at the closing quote as the house rule sets. Confirm italics on
-  a page image, since text layers and web captures often drop them. A quotation stays with its speaker:
-  what one person reports another saying is not the second person's sentence.
+  a page image, since text layers and web captures often drop them. A quotation
+  stays with its speaker: what one person reports another saying is not the
+  second person's sentence.
 - **Absolutes**: every *never*, *cannot*, *always*, *only* and *first* is a claim
   the source must hold or the sentence must qualify. Look for the counterexample.
 - **Details**: dates, numbers, names, titles and places, each against its
@@ -60,7 +62,8 @@ When the brief asks for a review of style or craft:
   words, each verb keeping the subject its source gives, and pronouns in the next
   sentence still finding their nouns.
 - **The record as it stands.** A revision uses only the facts the text and its
-  sources already carry. Anything more goes under "worth verifying".
+  sources already carry. Anything more goes in the "unverified" footnote, as a
+  fact to check first.
 - **The lightest fix.** A deletion beats a replacement when it resolves the
   issue.
 - **The neighbours.** A passage can contradict, repeat or spend the payoff of

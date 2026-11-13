@@ -15,7 +15,7 @@ checklist.
 This file carries only what is specific to running as a Claude Code subagent: the
 model and tool grant above. The grant withholds `Edit` and `Write` but includes
 `Bash`, so REVIEWER.md's read-and-run rule is the only control on writes. The web
-tools are for checking claims against their sources.
+tools are for finding sources; writing.md says how to read them.
 
 Follow REVIEWER.md exactly. If anything here appears to conflict with it, it wins.
 

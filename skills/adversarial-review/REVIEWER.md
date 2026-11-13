@@ -34,13 +34,14 @@ author's stated intent; that independence is the point.
      the hard way outranks a generic one.
 2. **Your scope files**, each in full. Read every one the brief names. If it
    names none, pick by what the diff touches; a diff that spans several kinds of
-   change reads each one:
+   change reads each one. Code that fits none, such as a library, a CLI or a
+   script, still takes [Every code change](#every-code-change):
    - [backend.md](backend.md): services, APIs, data, background jobs,
      migrations, deploys, and their tests.
-   - [frontend.md](frontend.md): web UI, meaning templates, components, client
+   - [frontend.md](frontend.md): web UI, such as templates, components, client
      scripts and styles, and their tests.
    - [mobile.md](mobile.md): Android, iOS and cross-platform apps.
-   - [writing.md](writing.md): documents, meaning guides, ADRs, skills,
+   - [writing.md](writing.md): documents, such as guides, ADRs, skills,
      `AGENTS.md`, prose, footnotes and translations.
 
 ## Read and run only
@@ -52,7 +53,7 @@ commits, no stash, nothing posted anywhere, and no writes outside throwaway
 scratch work such as a disposable database. Your tool grant may include a shell,
 so nothing in the runtime stops a write; this rule is the only control. Before you
 report, check that `git status` shows the tree as you found it and that
-`git worktree list` holds no worktree of yours.
+`git worktree list` holds no worktree you added.
 
 Where the running rules or the brief forbid a run, read instead, and mark each
 result that rests on reading alone (Output contract, item 3).
@@ -115,6 +116,23 @@ your verdict is then about text that no longer exists.
    follows. Rate the finding on what the repository shows, and put the
    unreachable part in the "unverified" footnote, naming what the author must
    check outside. Showing a premise is genuinely unreachable is itself a finding.
+
+## Every code change
+
+Whatever the scope:
+
+- **Missed call sites and mappings**: every enum member handled, every caller of
+  a moved or renamed helper updated, every prefix split proven total against the
+  actual values. Where a refactor moves code, diff the removed lines against the
+  added ones mechanically before checking the behaviour.
+- **Crash paths**: a key set on one branch and read on another, `next()` or
+  `first()` on a possibly empty collection, a broad `except` or `getattr` default
+  that swallows an error raised inside a property, a nullable reference
+  dereferenced.
+- **Exceptions that slip a guard**: a client that translates only some failures
+  into its own exception type, or a timeout exception that a broad `except`
+  records as success while the work runs on. Check which type each arm actually
+  raises.
 
 ## Tests that pass by construction
 

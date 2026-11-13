@@ -18,16 +18,6 @@ Read it with [REVIEWER.md](REVIEWER.md), which it extends.
 - **Merged reads**: when one surface unions several sources, verify gating per
   leg; a viewer allowed one leg must never receive another leg's rows, links or
   counts.
-- **Missed call sites and mappings**: every enum member handled, every caller of
-  a moved or renamed helper updated, every prefix split proven total against the
-  actual values.
-- **Crash paths**: a key set on one branch and read on another, `next()` on a
-  possibly empty iterator, a broad `except` or `getattr` default that swallows an
-  error raised inside a property, a nullable reference dereferenced.
-- **Exceptions that slip a guard**: a client that translates only some failures
-  into its own exception type, or a timeout exception that a broad `except`
-  records as success while the work runs on. Check which type each arm actually
-  raises.
 - **Retries and side effects**: a side effect that leaves the transaction
   recording it. A transfer sent inside an atomic block whose record write then
   fails stays live while the record rolls back, so a retry pays twice. For every

@@ -195,6 +195,8 @@ the notes, so the next prompt need not carry it.
   ```
 
   Put each scope file the diff needs after REVIEWER.md; `backend.md` above is
-  one example. `review-context.md` holds the intent, blast radius, ADRs and
-  attack list. Without it the reviewer cannot tell an out-of-scope discovery
-  from an in-scope defect, which is rule 2 failing before the review starts.
+  one example, and a mobile diff also needs `frontend.md`. `review-context.md`
+  holds the intent, blast radius, ADRs, what you already ran with its counts,
+  the round with what earlier rounds found, the file hashes, and the attack
+  list. Without it the reviewer cannot tell an out-of-scope discovery from an
+  in-scope defect, which is rule 2 failing before the review starts.

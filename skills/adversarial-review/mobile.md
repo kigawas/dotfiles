@@ -12,8 +12,8 @@ theming.
   or connection pool. Follow every lock the main thread can reach.
 - **Lifecycle**: background, foreground and termination in quick succession;
   process death and state restore; a screen recreated by rotation, theme or
-  locale change; a background task never ended, or ended twice. The OS kills a
-  suspended app that holds a file lock in a shared container.
+  locale change; a background task never ended, or ended twice. iOS kills a
+  suspended app that still holds a file or SQLite lock (crash code `0xdead10cc`).
 - **Threads**: mutable state reached from more than one thread, a callback
   delivered on a thread the code assumes is main, and cancellation that leaves
   native or database state open.
