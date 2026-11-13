@@ -8,7 +8,7 @@ These skills come from [mattpocock/skills](https://github.com/mattpocock/skills)
 | `skills/domain-modeling/` | `skills/engineering/domain-modeling/` | unchanged |
 | `skills/grilling/` | `skills/productivity/grilling/` | unchanged |
 | `skills/improve-codebase-architecture/` | `skills/engineering/improve-codebase-architecture/` | unchanged |
-| `skills/pr/` | `skills/engineering/pr/` | unchanged |
+| `skills/pr/` | `skills/engineering/pr/` | modified: `SKILL.md` adds the completion bar, the title and closing line, the whole-diff rule, rules for evidence, the Review and Decisions sections, the steps around the merge, and Posting |
 | `skills/writing-for-agents/` | `skills/productivity/writing-for-agents/` | unchanged |
 | `skills/writing-tests/` | `skills/engineering/tdd/` | modified: renamed from `tdd`, `SKILL.md` is rewritten, and `bug-fixes.md` is new |
 

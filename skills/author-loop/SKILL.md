@@ -180,24 +180,9 @@ a PR's next step goes missing between two firings.
   count or a list of failures saved earlier.
 - **An interrupted mutation battery leaves the mutation in the tree.** Follow
   [the battery rules](../review-loop/mutants.md#when-a-battery-is-interrupted).
-- **A `gh` body written inline runs its own backticks** as command
-  substitution, exits 0 and prints a URL. Write the body to a file with a
-  quoted heredoc (`<<'EOF'`) and pass `--body-file` or `-F body=@file`.
-- **A closing keyword can reach `main` three ways:** the branch's commit
-  messages, the PR title (it becomes the squash subject) and the PR body. After
-  every push or edit, run both of these:
-
-  ```bash
-  base=$(gh pr view <n> --json baseRefName --jq .baseRefName)
-  { gh pr view <n> --json title --jq .title; git log --format=%B "origin/$base..HEAD"; } \
-    | grep -inwE '(close[sd]?|fix(es|ed)?|resolve[sd]?):?[[:space:]]+(([-[:alnum:]._]+/[-[:alnum:]._]+)?#|GH-|https://github\.com/[-[:alnum:]._]+/[-[:alnum:]._]+/issues/)[0-9]+'
-  gh pr view <n> --json closingIssuesReferences --jq '[.closingIssuesReferences[].number]'
-  ```
-
-  The first prints each line of the title and the branch's own commits that puts
-  a keyword before a reference; the range starts at the PR's base, since a
-  stacked branch's log from `main` includes its parent's commits. The second is
-  GitHub's reading of the body: compare it with the issues the PR should close.
+- **A PR goes stale with every push**: its body's counts and claims, and its
+  closing keywords in the title, body and commits. Follow
+  [pr's Posting](../pr/SKILL.md#posting) on every push or edit.
 - **A pipe hides the status the chain was keyed on.** `make check | tail -1 &&
   git push` pushes whatever `make check` said, since `tail` succeeds. Run the
   gate as its own command and read its status, and keep the push out of the

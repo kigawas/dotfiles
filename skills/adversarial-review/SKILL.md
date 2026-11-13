@@ -41,8 +41,9 @@ never the problem. Scope discovered a round at a time is.
    grown scope mean a rebuild (rule 8), not a round 3.
 4. **PR**: run the repository's gates after the last edit, reading the pass
    count, then open the PR if `AGENTS.md` gives you that word. By default a loop
-   that ended on anything but `SHIP` presents the diff and waits. Record a
-   disposition in the PR body for any finding deliberately deferred.
+   that ended on anything but `SHIP` presents the diff and waits. Report the
+   rounds in the PR body's [Review section](../pr/SKILL.md#review), with a
+   disposition for any finding deliberately deferred.
 
 Two rounds is the budget, not a target; a clean round 1 goes straight to PR.
 
