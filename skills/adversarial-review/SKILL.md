@@ -166,9 +166,10 @@ check only where the text around it changed, so the round spends its budget on
 what moved.
 
 **Pin what it reads.** Give the hash of each file under review (`git rev-parse
-:<path>` for a staged blob, `git hash-object <file>` otherwise) and ask the
-reviewer to re-check it at the end. A tree that moves under a reviewer, often
-through the author's own edit, turns its verdict into one about text nobody read.
+:<path>` for a staged blob, `git rev-parse <commit>:<path>` for a ref range's
+head) and ask the reviewer to re-check it at the end. A tree that moves under a
+reviewer, often through the author's own edit, turns its verdict into one about
+text nobody read.
 
 **When the diff is documentation**, point the reviewer at the claims to verify,
 one by one, and tell it to skip rewordings that would merely read better.
@@ -206,5 +207,4 @@ the prompt and add it to the notes, so the next prompt need not carry it.
   By default, Codex's read-only and workspace-write sandboxes refuse
   `git worktree add`, which writes in `.git`. Where it is refused, a Codex
   review reads rather than runs ([REVIEWER.md](REVIEWER.md#where-you-run)),
-  and its verdict says so. Read-only cannot save the snapshot either, and
-  needs none, since nothing it runs can write.
+  and its verdict says so.

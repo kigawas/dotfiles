@@ -55,21 +55,21 @@ author's stated intent; that independence is the point.
 
 In the author's checkout, only read: files, with tools that only read, such as
 `rg`, and git, with commands that report, such as `git diff` and `git show`.
-Those still run what git is set up to run: `git status` and `git diff` refresh
-the index's cached file stats, which changes nothing they report but runs any
-`post-index-change` hook, and commands that read files or diffs run the
-configured filters, textconv drivers and fsmonitor. Read those first (Where
-you run, step 1). Apart from those refreshes, git's own records are the one
-exception: adding and removing your worktrees, and the objects that loading
-the staged tree writes (Where you run, step 2). Run everything else in
-scratch: in your own worktrees ([Where you run](#where-you-run)), where you may
-build, mutate and delete, or in toy projects of your own. Beyond that: no
-edits, no commits, no stash, nothing posted anywhere, and no writes outside
-scratch, such as a disposable database or the battery's backups. An install
-may add to a shared download cache, such as a package manager's. A recursive
-delete, such as a purge of `__pycache__` or of your scratch, is `rm -rf` on an
-absolute path, never one built from a variable. Your tool grant may include a
-shell, so nothing in the runtime stops a write; this rule is the only control.
+Even those run what git is set up to run, such as hooks, filters, fsmonitor,
+signature checks and a partial clone's fetch of an object it lacks, and
+`git status` and `git diff` rewrite the index's cached file stats: read what
+git runs before your first git command there (Where you run, step 1). Git's
+own records are also an exception: adding and removing your worktrees, and the
+objects that loading the staged tree writes (Where you run, step 2). Run
+everything else in scratch: in your own worktrees
+([Where you run](#where-you-run)), where you may build, mutate and delete, or
+in toy projects of your own. Beyond that: no edits, no commits, no stash,
+nothing posted anywhere, and no writes outside scratch, such as a disposable
+database or the battery's backups. An install may add to a shared download
+cache, such as a package manager's. A recursive delete, such as a purge of
+`__pycache__` or of your scratch, is `rm -rf` on an absolute path, never one
+built from a variable. Your tool grant may include a shell, so nothing in the
+runtime stops a write; this rule is the only control.
 
 Where the running rules or the brief forbid a run, or your worktree cannot be
 added or built (Where you run, steps 2 and 5), read instead, and mark each
@@ -85,13 +85,16 @@ Before you report:
   it shows, such as a rewritten lockfile, means every run after the rewrite
   tested a tree other than the diff, so name it;
 - stop every service you started, as the running rules say;
-- remove each worktree you added with `git worktree remove --force <path>`,
-  since one holding staged changes refuses without `--force`, and check
-  that `git worktree list` no longer shows it;
+- remove each worktree you added with `git worktree remove --force <worktree>`,
+  since one holding staged changes refuses without `--force`, and check that
+  `git worktree list` no longer shows it;
 - take the snapshot of the author's checkout again (Where you run, step 1),
-  compare it with the first, and name every line that differs, gone as well as
-  new, saying which your runs could have made: the author's own work and other
-  sessions' fetches since then show there too;
+  into `<scratch>/after` this time, compare the two, and name every line that
+  differs, gone as well as new, saying which your runs could have made: the
+  author's own work and other sessions' fetches since then show there too. For
+  a config line, name the key, not its value, and redact any credential in
+  either;
+- re-check the pinned hashes ([Inputs and scope](#inputs-and-scope));
 - list the scratch you leave behind.
 
 ## Inputs and scope
@@ -111,54 +114,69 @@ Run in a worktree of your own that holds exactly the diff, and read the diff's
 files there too. It keeps your runs out of the author's tree, and their
 unstaged edits out of your results. It still shares their git directory and
 inherits your session's environment. Steps 1 and 3 narrow those two ways back
-to them. Step 1's snapshot shows a change to their config, hooks, refs, stash
-or `HEAD`, and a file that turns changed, untracked or ignored. It misses a
+to them. Step 1's snapshot shows only a change to their config, hooks, refs,
+stash or `HEAD`, and a file that turns changed, untracked or ignored: not a
 further edit to a file already in one of those states, anything inside an
-ignored folder, and a write into an environment of theirs, such as their
-`.venv`: there the only guards are step 1's variable checks and step 7's `cd`.
+ignored folder, or anything else in their git directory, such as `info/` or a
+submodule's config. A write into an environment of theirs, such as their
+`.venv`, has only step 1's variable checks and step 7's `cd` to guard it.
 
-1. **Before you touch anything**, in their checkout:
+1. **Before you touch anything**, make your scratch folder, such as
+   `mkdir -m 700 /tmp/<name>/` by its literal path, closed to other users
+   since the snapshot copies git config: `<scratch>` below is that folder, and
+   each worktree you add goes in a folder of its own inside it, `<worktree>`.
+   Then, in their checkout:
    - Check that `env | grep '^GIT_'` prints nothing, or unset what it prints on
      every command. A `GIT_INDEX_FILE` or `GIT_DIR` inherited from a hook
      points git at their index, and step 2 then rewrites it.
    - Read what git runs for you, with commands that run nothing:
 
      ```bash
-     cd <their checkout> && git rev-parse --git-path hooks
-     git config --get-regexp '^core\.(hookspath|fsmonitor)$'
-     git config --get-regexp '^(filter|diff|hook)\.'
+     cd <their checkout> && { git rev-parse --git-path hooks
+       git config --get-regexp '^core\.(hookspath|fsmonitor)$'
+       git config --get-regexp '^(filter|diff|hook|gpg)\.|showsignature'
+       git config --get-regexp '^(pretty\.|format\.pretty)|promisor'; }
      ```
 
-     Read the hooks in the folder the first prints, and what each line names.
-     A relative `core.hooksPath` runs the copy in whichever tree git is working
-     on, so read theirs, and also `git show <commit>:<path>` and
-     `git show :<path>`.
+     Read the hooks in the folder the first prints and what each line names,
+     and do the same in each submodule. A relative `core.hooksPath` can run
+     the copy in their checkout or in any tree you add or load, so read each:
+     theirs, `git show <commit>:<path>` for each commit you add a worktree at,
+     and `git show :<path>` for the staged tree. A `promisor` line means a
+     read of an object their clone lacks goes to the network; offline it
+     fails, which says nothing about the diff.
    - Run every command without the variables that point at their checkout or
      an environment of theirs, such as `VIRTUAL_ENV`, `UV_PROJECT_ENVIRONMENT`
      or a `PATH` entry inside their checkout: an install or a run follows them
      there. `env | grep -F <their checkout>` lists those that name it by that
-     path, though not by a symlink to it, nor an environment of theirs kept
-     elsewhere, such as a virtualenv outside the checkout.
+     path, and `PWD` or `OLDPWD`, which name it because you have been there.
+     It misses a symlink to it, and an environment of theirs kept elsewhere,
+     such as a virtualenv outside the checkout.
    - Save a snapshot of what your runs can reach through git, to compare before
      you report:
 
      ```bash
-     cd <their checkout> && { git status --short --branch --ignored
-       git config --local --list; git for-each-ref; git stash list
-       find "$(git rev-parse --git-path hooks)" -type f -exec shasum {} + 2>&1 |
-         sort; } > <scratch>/before
+     cd <their checkout> && { git status --short --branch \
+         --ignored=matching --untracked-files=all
+       git rev-parse HEAD; git config --list --show-scope
+       git for-each-ref; git stash list
+       find -L "$(git rev-parse --git-path hooks)" ! -type d \
+         -exec ls -lL {} + -exec shasum {} + 2>&1 | sort; } > <scratch>/before
      ```
 
+     Under a sandbox that refuses every write, skip the scratch folder and
+     both snapshots: nothing you run can change their checkout.
+
 2. **Add it in scratch**:
-   `cd <their checkout> && git worktree add --detach <path> <commit>`, where
-   `<commit>` is the head of a ref range, or `HEAD` for the staged tree. For
-   the staged tree, then load their index into yours through a copy:
+   `cd <their checkout> && git worktree add --detach <worktree> <commit>`,
+   where `<commit>` is the head of a ref range, or `HEAD` for the staged tree.
+   For the staged tree, then load their index into yours through a copy:
 
    ```bash
    cd <their checkout> &&
      cp "$(git rev-parse --git-path index)" <scratch>/index &&
      GIT_INDEX_FILE=<scratch>/index git write-tree
-   cd <path> && git read-tree -u --reset <the tree it printed>
+   cd <worktree> && git read-tree -u --reset <the tree it printed>
    ```
 
    `git write-tree` rewrites the index it reads, so never run it on theirs; on
@@ -194,9 +212,9 @@ ignored folder, and a write into an environment of theirs, such as their
    such as an editable install, loads that checkout's code, and `python -c`
    puts the current directory first on the import path, where a runner's own
    script, such as `pytest`, does not.
-7. **Run each command from inside it** (`cd <path> && <command>`): a shell tool
-   can start each call in the author's checkout, and a command run there acts
-   on their tree.
+7. **Run each command from inside it** (`cd <worktree> && <command>`): a shell
+   tool can start each call in the author's checkout, and a command run there
+   acts on their tree.
 
 ## Method: verify, don't speculate
 
