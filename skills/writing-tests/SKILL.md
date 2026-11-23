@@ -55,7 +55,7 @@ When a slice adds several tests, repeat red again and green again one break at a
 
 **Broken code runs for real.** Before a break, ask what the broken code will write: against a shared database or a live service, it writes real rows. Break only code whose writes stay yours: a test database, a fake, the test's own records. Where the code can't be broken safely, or isn't yours to edit, change the test's expected value instead, and say so: that proves the assertion runs and is exact, not that it catches the loss.
 
-In Python, run red again with `PYTHONDONTWRITEBYTECODE=1`, or clear `__pycache__` after the restore. A break of the same length, restored within the same second, otherwise keeps running from the bytecode cache.
+In Python, run red again with `PYTHONDONTWRITEBYTECODE=1`, or clear `__pycache__` after the restore, with `rm -rf` on its absolute path, never one built from a variable. A break of the same length, restored within the same second, otherwise keeps running from the bytecode cache.
 
 ## Pinning existing behaviour
 

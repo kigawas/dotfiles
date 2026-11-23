@@ -27,15 +27,18 @@ than a paraphrase of them.
 - **For each mutant**, back the file up with `cp` to scratch outside the tree,
   apply the mutant, run its tests, restore the file, and check the file's hash
   against the original. For Python, run with `PYTHONDONTWRITEBYTECODE=1` after
-  purging `__pycache__`: a stale `.pyc` runs the *previous* mutant
+  purging `__pycache__` with `rm -rf` on its absolute path, written out for the
+  worktree the battery runs in, never built from a variable: a stale `.pyc`
+  runs the *previous* mutant
   ([REVIEWER.md](../adversarial-review/REVIEWER.md), method step 5).
 - **A mutant is caught only when the runner reports failed tests, and a test the
   entry names fails with the failure the entry expects.** Anything else means a
   broken entry, not a kill:
   - **Any other exit status.** pytest exits 1 for failed tests. A collection
     error exits 2 when a file is named and 4 when a test id is, and a test id
-    that no longer exists exits 4 too, running nothing. A script that counts any non-zero exit as a kill
-    reads a renamed test, or a mutant that breaks an import, as caught.
+    that no longer exists exits 4 too, running nothing. A script that counts
+    any non-zero exit as a kill reads a renamed test, or a mutant that breaks
+    an import, as caught.
   - **An exception the entry did not name**, such as a `NameError` from a
     replacement that no longer fits the code. The mutant then crashes the code
     rather than making the claim false.

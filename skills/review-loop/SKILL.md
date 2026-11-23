@@ -390,7 +390,9 @@ A real defect outside the diff becomes an issue: search first
 ## Cleanup, every firing
 
 Before the turn ends:
-- restore any mutation from its backup and confirm with `git status --short`;
+- restore any mutation from its backup and prove each restore with `cmp`
+  against its backup: `git status` reports per file, so a mutant in a file that
+  already differs from the index shows no change;
 - stop or drop every test environment the firing started;
 - `git worktree remove` each worktree;
 - confirm with `git worktree list` that background reviewers cleaned up after

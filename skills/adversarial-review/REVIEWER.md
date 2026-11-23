@@ -52,18 +52,27 @@ author's stated intent; that independence is the point.
 
 ## Read and run only
 
-Two writes are allowed, and each is undone before you report: a mutation battery
+Two writes are allowed that you undo before you report: a mutation battery
 (Method 5) ends with every file back byte-exact, though it may purge
 `__pycache__`, and a baseline worktree (Method 6) is removed with
-`git worktree remove`. Beyond those: no edits, no commits, no stash, nothing
-posted anywhere, and no writes outside throwaway scratch work such as a
-disposable database or the battery's backups. Your tool grant may include a
-shell, so nothing in the runtime stops a write; this rule is the only control.
-Before you report, check that `git status` shows the tree as you found it and
-that `git worktree list` holds no worktree you added.
+`git worktree remove`. The caches and build output that the repository's
+commands write, such as `.pytest_cache`, `build/` or a package manager's
+download cache, may stay, except output a mutant built: a build or cache that
+trusts timestamps can run it again for the author, so force a rebuild from the
+restored files, or name it in your report. Beyond those: no edits, no commits,
+no stash, nothing posted anywhere, and no writes outside throwaway scratch work
+such as a disposable database or the battery's backups. A recursive delete,
+such as a purge of `__pycache__` or of your scratch, is `rm -rf` on an absolute
+path, never one built from a variable. Your tool grant may include a shell, so
+nothing in the runtime stops a write; this rule is the only control.
 
 Where the running rules or the brief forbid a run, read instead, and mark each
 result that rests on reading alone (Output contract, item 3).
+
+Before you report, compare `git status --short --ignored` with its output
+before your first run, and name every line that differs, gone as well as new;
+check that `git worktree list` holds no worktree you added; and list the
+scratch you leave behind.
 
 ## Inputs and scope
 
@@ -92,10 +101,12 @@ your verdict is then about text that no longer exists.
    evidence about it.
 3. **Run things**, from inside the repository: the affected tests, the linters
    and type checkers the diff could break, and the runs your scope file names for
-   the kind of change. Mirror CI where the repository's notes name it, and run
-   its lockfile check in a mode that writes nothing, such as `uv lock --check`:
-   a run command that re-resolves dependencies can rewrite the lockfile under
-   review, and pass where CI's locked install fails. Report exact counts.
+   the kind of change. Mirror CI where the repository's notes name it. Run its
+   lockfile check before anything that resolves dependencies runs in the tree,
+   in a mode that writes nothing, such as `uv lock --check`: any command that
+   re-resolves dependencies, such as a sync or a run, can rewrite a stale
+   lockfile, and the check then passes where CI's locked install fails. Report
+   exact counts.
    Re-run what the author already ran only where you doubt it or the tree has
    moved since.
 4. **Mutation thinking.** For each property that matters, ask what one-line
@@ -133,7 +144,9 @@ your verdict is then about text that no longer exists.
    - **Add a worktree in scratch**: `git worktree add --detach <path> <base>`,
      where `<base>` is what the diff is measured against: `HEAD` only for an
      uncommitted change, and for a ref range its base (`git merge-base A B` for
-     `A...B`).
+     `A...B`). Adding it runs the hooks git is configured with, such as
+     `post-checkout` and `reference-transaction`, and any smudge filter, as
+     any checkout does, and what they write counts as yours: read them first.
    - **Run from inside it** (`cd <path> && <command>`), through an environment
      that loads the worktree's code, built inside the worktree if need be. One
      borrowed from the author's checkout, such as an editable install, loads
