@@ -5,8 +5,9 @@
 #   ./install.sh [scope...]           dry run: print what would change, change nothing
 #   ./install.sh --apply [scope...]   make the changes
 #
-# A scope is named for where its links land: all (the default), claude, pi
-# or misc. Name several to run several, such as ./install.sh --apply claude pi.
+# A scope is named for where its links land: all (the default), claude, pi,
+# gemini or misc. Name several to run several, such as
+# ./install.sh --apply claude pi.
 #
 #   claude: links into ~/.claude
 #     agents/AGENTS.md     -> ~/.claude/CLAUDE.md
@@ -20,6 +21,8 @@
 #     pi/mcp.json          -> ~/.pi/agent/mcp.json
 #     pi/extensions/<file> -> ~/.pi/agent/extensions/<file>   (one link per file)
 #     pi/agents/<file>     -> ~/.pi/agent/agents/<file>       (one link per file)
+#   gemini: links into ~/.gemini, the folder agy shares
+#     skills/<name>/       -> ~/.gemini/skills/<name>         (one link per skill)
 #   misc: everything else
 #     skills/<name>/       -> ~/.agents/skills/<name>   (one link per skill; both
 #                             tools read them, and other skills there are left alone)
@@ -45,10 +48,10 @@ SCOPES=""
 for arg in "$@"; do
   case "$arg" in
     --apply) APPLY=1 ;;
-    all|claude|pi|misc) SCOPES="$SCOPES $arg" ;;
+    all|claude|pi|gemini|misc) SCOPES="$SCOPES $arg" ;;
     # The comment block at the top, up to the first line that isn't a comment.
     -h|--help) awk 'NR > 1 && !/^#/ { exit } NR > 1' "$0"; exit 0 ;;
-    *) echo "unknown argument: $arg (scopes: all, claude, pi, misc; see --help)" >&2; exit 2 ;;
+    *) echo "unknown argument: $arg (scopes: all, claude, pi, gemini, misc; see --help)" >&2; exit 2 ;;
   esac
 done
 SCOPES="${SCOPES# }"
@@ -116,6 +119,13 @@ if in_scope pi; then
   for agent in "$REPO"/pi/agents/*.md; do
     [ -f "$agent" ] || continue
     link "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
+  done
+fi
+
+if in_scope gemini; then
+  for skill_dir in "$REPO"/skills/*/; do
+    [ -d "$skill_dir" ] || continue
+    link "${skill_dir%/}" "$HOME/.gemini/skills/$(basename "$skill_dir")"
   done
 fi
 

@@ -6,7 +6,7 @@ This repo holds Ryan's personal config: shared agent instructions, skills, pi se
 
 - `agents/AGENTS.md`: shared user instructions. `install.sh` links it to `~/.claude/CLAUDE.md` and `~/.pi/agent/AGENTS.md`. Keep it tool-neutral. Ask before changing it.
 - `agents/skill-lock.json`: a copy of `~/.agents/.skill-lock.json`, the `npx skills` record of installed skills and their sources. Nothing links it. Copy it again after installing or updating skills. A skill kept in `skills/` stays out of the lock, even an unchanged upstream copy: `npx skills update` would delete its link and copy upstream's version in. Take it out by editing the lock, since `npx skills remove` also deletes the links.
-- `skills/<name>/`: skills, each linked into `~/.agents/skills/` one at a time.
+- `skills/<name>/`: skills, each linked into `~/.agents/skills/` one at a time, and into `~/.gemini/skills/`, where agy reads them.
 - `claude/settings.json`: a copy of `~/.claude/settings.json`, minus its `autoMode` block, which names private repos and stays in the live file only. Nothing links it. When you change one, change the other, then compare them with `diff <(jq -S 'del(.autoMode)' ~/.claude/settings.json) <(jq -S . claude/settings.json)`.
 - `claude/agents/`, `pi/agents/`: user-level subagents, each file linked into `~/.claude/agents/` or `~/.pi/agent/agents/`. One agent has a file in each, since the two tools name tools and models differently. Keep both thin: point at a skill's file for the substance.
 - General skills replace copies kept in several repos. Repository details stay in the repository: commands and policy in its `AGENTS.md`, review stakes, traps and running rules in `docs/review-notes.md`.
