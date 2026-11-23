@@ -176,7 +176,11 @@ force-push, the wrong branch fetched) before trusting the diff.
 [open-branch](../open-branch/SKILL.md): FETCH, then
 `git worktree add --detach <path> "$HEAD_SHA"`, then INSTALL and PROVE. Give the
 review **its own test environment** (database, ports, services), as the
-repository's `AGENTS.md` describes, never one another runner uses.
+repository's `AGENTS.md` describes, never one another runner uses. Adding any
+worktree runs the checkout hooks and smudge filters git is configured with, so
+read them first, and an install's own scripts, such as npm's `prepare`, can
+set the shared config or hooks
+([REVIEWER.md](../adversarial-review/REVIEWER.md#where-you-run), steps 2–3).
 
 A test that fails under load and passes alone is still a failure until the base
 shows otherwise. Run the same selection under the same load, a few times, at the

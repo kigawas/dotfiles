@@ -32,9 +32,10 @@ author's stated intent; that independence is the point.
      correctness, robustness, efficiency, style.
    - **Gates** replace the defaults in Method 3: the repository's lint,
      typecheck and test commands, and its CI workflow, are what you mirror.
-   - **Running rules** bind you: the environment to start, how to run things,
-     and what to leave alone, such as a shared build, a shared stack or a
-     device. The brief can add to them.
+   - **Running rules** bind you: how to build the environment in your
+     worktree, any file to copy into it, a fallback where that build fails,
+     how to run things, and what to leave alone, such as a shared build, a
+     shared stack or a device. The brief can add to them.
    - **Traps** join the scope's attack checklist. A trap the repository earned
      the hard way outranks a generic one.
 2. **Your scope files**, each in full: one for every kind of change the diff
@@ -52,38 +53,150 @@ author's stated intent; that independence is the point.
 
 ## Read and run only
 
-Two writes are allowed that you undo before you report: a mutation battery
-(Method 5) ends with every file back byte-exact, though it may purge
-`__pycache__`, and a baseline worktree (Method 6) is removed with
-`git worktree remove`. The caches and build output that the repository's
-commands write, such as `.pytest_cache`, `build/` or a package manager's
-download cache, may stay, except output a mutant built: a build or cache that
-trusts timestamps can run it again for the author, so force a rebuild from the
-restored files, or name it in your report. Beyond those: no edits, no commits,
-no stash, nothing posted anywhere, and no writes outside throwaway scratch work
-such as a disposable database or the battery's backups. A recursive delete,
-such as a purge of `__pycache__` or of your scratch, is `rm -rf` on an absolute
-path, never one built from a variable. Your tool grant may include a shell, so
-nothing in the runtime stops a write; this rule is the only control.
+In the author's checkout, only read: files, with tools that only read, such as
+`rg`, and git, with commands that report, such as `git diff` and `git show`.
+Those still run what git is set up to run: `git status` and `git diff` refresh
+the index's cached file stats, which changes nothing they report but runs any
+`post-index-change` hook, and commands that read files or diffs run the
+configured filters, textconv drivers and fsmonitor. Read those first (Where
+you run, step 1). Apart from those refreshes, git's own records are the one
+exception: adding and removing your worktrees, and the objects that loading
+the staged tree writes (Where you run, step 2). Run everything else in
+scratch: in your own worktrees ([Where you run](#where-you-run)), where you may
+build, mutate and delete, or in toy projects of your own. Beyond that: no
+edits, no commits, no stash, nothing posted anywhere, and no writes outside
+scratch, such as a disposable database or the battery's backups. An install
+may add to a shared download cache, such as a package manager's. A recursive
+delete, such as a purge of `__pycache__` or of your scratch, is `rm -rf` on an
+absolute path, never one built from a variable. Your tool grant may include a
+shell, so nothing in the runtime stops a write; this rule is the only control.
 
-Where the running rules or the brief forbid a run, read instead, and mark each
-result that rests on reading alone (Output contract, item 3).
+Where the running rules or the brief forbid a run, or your worktree cannot be
+added or built (Where you run, steps 2 and 5), read instead, and mark each
+result that rests on reading alone (Output contract, item 3). Without a
+worktree, read through git, not their checkout, which holds their unstaged
+edits too: `git show :<path>` and `git grep --cached` for the staged tree, or
+`git show <commit>:<path>` and `git grep <pattern> <commit>`, with
+`git ls-tree -r --name-only <commit>` to list the files.
 
-Before you report, compare `git status --short --ignored` with its output
-before your first run, and name every line that differs, gone as well as new;
-check that `git worktree list` holds no worktree you added; and list the
-scratch you leave behind.
+Before you report:
+
+- check that `git diff` in each worktree of yours prints nothing: a tracked file
+  it shows, such as a rewritten lockfile, means every run after the rewrite
+  tested a tree other than the diff, so name it;
+- stop every service you started, as the running rules say;
+- remove each worktree you added with `git worktree remove --force <path>`,
+  since one holding staged changes refuses without `--force`, and check
+  that `git worktree list` no longer shows it;
+- take the snapshot of the author's checkout again (Where you run, step 1),
+  compare it with the first, and name every line that differs, gone as well as
+  new, saying which your runs could have made: the author's own work and other
+  sessions' fetches since then show there too;
+- list the scratch you leave behind.
 
 ## Inputs and scope
 
-Expect: the diff (a diff file, a ref range, or the staged tree), a one-paragraph
-intent, the blast radius, the scope files to read, the round number with what
-earlier rounds found, what the author already ran with its counts, pointers to the
-relevant ADRs, a ranked list of what to attack, and file hashes to re-check at the
-end. The diff is the review scope. Read as much surrounding code as you need, but
-report findings only against the change and what it newly exposes. If the diff
-carries an unrelated edit, say so. If a pinned hash moved while you read, say so:
-your verdict is then about text that no longer exists.
+Expect: the diff (the staged tree or a ref range), a one-paragraph intent, the
+blast radius, the scope files to read, the round number with what earlier
+rounds found, what the author already ran with its counts, pointers to the
+relevant ADRs, a ranked list of what to attack, and file hashes to re-check at
+the end. The diff is the review scope. Read as much surrounding code as you
+need, but report findings only against the change and what it newly exposes.
+If the diff carries an unrelated edit, say so. If a pinned hash moved while you
+read, say so: your verdict is then about text that no longer exists.
+
+## Where you run
+
+Run in a worktree of your own that holds exactly the diff, and read the diff's
+files there too. It keeps your runs out of the author's tree, and their
+unstaged edits out of your results. It still shares their git directory and
+inherits your session's environment. Steps 1 and 3 narrow those two ways back
+to them. Step 1's snapshot shows a change to their config, hooks, refs, stash
+or `HEAD`, and a file that turns changed, untracked or ignored. It misses a
+further edit to a file already in one of those states, anything inside an
+ignored folder, and a write into an environment of theirs, such as their
+`.venv`: there the only guards are step 1's variable checks and step 7's `cd`.
+
+1. **Before you touch anything**, in their checkout:
+   - Check that `env | grep '^GIT_'` prints nothing, or unset what it prints on
+     every command. A `GIT_INDEX_FILE` or `GIT_DIR` inherited from a hook
+     points git at their index, and step 2 then rewrites it.
+   - Read what git runs for you, with commands that run nothing:
+
+     ```bash
+     cd <their checkout> && git rev-parse --git-path hooks
+     git config --get-regexp '^core\.(hookspath|fsmonitor)$'
+     git config --get-regexp '^(filter|diff|hook)\.'
+     ```
+
+     Read the hooks in the folder the first prints, and what each line names.
+     A relative `core.hooksPath` runs the copy in whichever tree git is working
+     on, so read theirs, and also `git show <commit>:<path>` and
+     `git show :<path>`.
+   - Run every command without the variables that point at their checkout or
+     an environment of theirs, such as `VIRTUAL_ENV`, `UV_PROJECT_ENVIRONMENT`
+     or a `PATH` entry inside their checkout: an install or a run follows them
+     there. `env | grep -F <their checkout>` lists those that name it by that
+     path, though not by a symlink to it, nor an environment of theirs kept
+     elsewhere, such as a virtualenv outside the checkout.
+   - Save a snapshot of what your runs can reach through git, to compare before
+     you report:
+
+     ```bash
+     cd <their checkout> && { git status --short --branch --ignored
+       git config --local --list; git for-each-ref; git stash list
+       find "$(git rev-parse --git-path hooks)" -type f -exec shasum {} + 2>&1 |
+         sort; } > <scratch>/before
+     ```
+
+2. **Add it in scratch**:
+   `cd <their checkout> && git worktree add --detach <path> <commit>`, where
+   `<commit>` is the head of a ref range, or `HEAD` for the staged tree. For
+   the staged tree, then load their index into yours through a copy:
+
+   ```bash
+   cd <their checkout> &&
+     cp "$(git rev-parse --git-path index)" <scratch>/index &&
+     GIT_INDEX_FILE=<scratch>/index git write-tree
+   cd <path> && git read-tree -u --reset <the tree it printed>
+   ```
+
+   `git write-tree` rewrites the index it reads, so never run it on theirs; on
+   the copy it leaves theirs alone and adds only git objects. A diff file is
+   not enough: `git apply` can place a hunk at the wrong lines and still exit
+   0. Given one, say so and read instead, unless the brief names the ref range
+   or staged tree it came from. The hooks git is configured with run on its
+   writes, such as adding a worktree, `write-tree` on the copy or loading an
+   index, and any smudge filter runs on a checkout. What they write counts as
+   yours: read them first (step 1).
+3. **Leave their git alone.** Your worktree shares their git directory: its
+   config, hooks, refs and stash. A git write in it reaches them, such as a
+   commit, or a setup step that installs hooks or sets config, as an install's
+   own scripts can, such as npm's `prepare`. Skip any such step you can see, or
+   switch it off where the tool allows; the snapshot shows what reaches their
+   config, hooks, refs and stash.
+4. **Check the lockfile first**, where the repository has a check that writes
+   nothing, such as `uv lock --check`: an install or a run that re-resolves
+   dependencies rewrites a stale lockfile, and the check then passes where
+   CI's locked install fails. A stale lockfile is a finding in itself.
+5. **Build what your runs need**, as the running rules say, through
+   [open-branch](../open-branch/SKILL.md)'s INSTALL and PROVE: from the lock
+   as the diff leaves it, without moving it, and with local config seeded from
+   the committed example. Copy nothing from the author's checkout that the
+   running rules do not name: their local config can hold real credentials, or
+   point at their own database. A build or PROVE that fails may be the diff's
+   doing, so build the base the same way (Method 6). A failure the base does
+   not share is a finding. One it shares, or a build that will not finish in
+   the time the brief allows, means read instead, unless the running rules name
+   a fallback.
+6. **Check which copy of the code each runner loads**, such as by printing a
+   module's `__file__` under it. An environment borrowed from another checkout,
+   such as an editable install, loads that checkout's code, and `python -c`
+   puts the current directory first on the import path, where a runner's own
+   script, such as `pytest`, does not.
+7. **Run each command from inside it** (`cd <path> && <command>`): a shell tool
+   can start each call in the author's checkout, and a command run there acts
+   on their tree.
 
 ## Method: verify, don't speculate
 
@@ -93,22 +206,17 @@ your verdict is then about text that no longer exists.
    start with what the previous round's fixes added: each round's hardening is
    the next round's attack surface.
 2. **Find the proof** for every load-bearing claim. For library, framework or
-   platform behaviour, read the installed source (`.venv`, `node_modules`, the
-   Gradle cache, a checkout of the pinned tag), not memory, and say in the finding
-   that you did. Where the dependency runs locally, a measurement against it
-   beats reading its source. The brief is a claim too: the intent, the blast
-   radius and the attack list are the author's account of the change, not
-   evidence about it.
-3. **Run things**, from inside the repository: the affected tests, the linters
-   and type checkers the diff could break, and the runs your scope file names for
-   the kind of change. Mirror CI where the repository's notes name it. Run its
-   lockfile check before anything that resolves dependencies runs in the tree,
-   in a mode that writes nothing, such as `uv lock --check`: any command that
-   re-resolves dependencies, such as a sync or a run, can rewrite a stale
-   lockfile, and the check then passes where CI's locked install fails. Report
-   exact counts.
-   Re-run what the author already ran only where you doubt it or the tree has
-   moved since.
+   platform behaviour, read the installed source (your worktree's `.venv` or
+   `node_modules`, the Gradle cache, a checkout of the pinned tag), not memory,
+   and say in the finding that you did. Where the dependency runs locally, a
+   measurement against it beats reading its source. The brief is a claim too:
+   the intent, the blast radius and the attack list are the author's account of
+   the change, not evidence about it.
+3. **Run things**, in your worktree: the affected tests, the linters and type
+   checkers the diff could break, and the runs your scope file names for the
+   kind of change. Mirror CI where the repository's notes name it, its lockfile
+   check included (Where you run, step 4). Report exact counts. Re-run what the
+   author already ran only where you doubt it or the tree has moved since.
 4. **Mutation thinking.** For each property that matters, ask what one-line
    change to production code would leave every test green: a dropped guard, an
    inverted comparison, a flag hard-coded, two arguments swapped. If it survives,
@@ -117,16 +225,15 @@ your verdict is then about text that no longer exists.
    about whether the caller passes the right value to the right parameter. Where a
    diff says one predicate mirrors a set of gates, enumerate the gates and check
    each.
-5. **Run the battery for real**, not in your head: back each file up in scratch
-   outside the tree, mutate, run the relevant tests, restore from the backup.
-   - **Restore from the backup**, never with `git checkout <path>`, which
-     restores from the index and destroys unstaged work. Prove every restore
-     byte-exact before you report, with `cmp` against each backup or
-     `shasum -c` against hashes taken first. `git diff` cannot: it skips
-     untracked files and shows the author's unstaged edits, and a `--stat`
-     misses a mutant on a line the author already changed.
+5. **Run the battery for real**, not in your head, in your worktree: back each
+   file up in scratch outside it, mutate, run the relevant tests, restore from
+   the backup.
+   - **Prove every restore byte-exact** before you report, with `cmp` against
+     each backup or `shasum -c` against hashes taken first. A restore from the
+     index, such as `git checkout <path>`, is right only while the index matches
+     the tree under review.
    - **Size a battery to finish inside one tool call.** One cut off mid-run,
-     such as by a timeout, leaves its mutant in the tree: restore from the
+     such as by a timeout, leaves its mutant in the worktree: restore from the
      backups before anything runs again, since a re-run backs the mutant up
      over them; prove it with `cmp`, then grep for the mutation.
    - **Read the pass and skip counts**, not the exit status: a suite that skips
@@ -136,28 +243,14 @@ your verdict is then about text that no longer exists.
      same-length restore inside the same mtime second can leave stale Python
      bytecode (`PYTHONDONTWRITEBYTECODE=1` and a purged `__pycache__` prevent
      it) that runs the *previous* mutant and reports a false survivor.
-   - **One battery per tree**: a background suite and a battery on the same
-     tree corrupt each other's evidence.
+   - **One battery per worktree**: a background suite and a battery on the
+     same worktree corrupt each other's evidence.
 6. **Prove causation before blaming the diff for a failing test.** Run the same
-   selection on a clean tree at the diff's base. A red test is not automatically
-   the author's.
-   - **Add a worktree in scratch**: `git worktree add --detach <path> <base>`,
-     where `<base>` is what the diff is measured against: `HEAD` only for an
-     uncommitted change, and for a ref range its base (`git merge-base A B` for
-     `A...B`). Adding it runs the hooks git is configured with, such as
-     `post-checkout` and `reference-transaction`, and any smudge filter, as
-     any checkout does, and what they write counts as yours: read them first.
-   - **Run from inside it** (`cd <path> && <command>`), through an environment
-     that loads the worktree's code, built inside the worktree if need be. One
-     borrowed from the author's checkout, such as an editable install, loads
-     the author's code, and a script run from that checkout acts on the
-     author's tree and on state kept there.
-   - **Check which copy that same command loads**, such as by printing a
-     module's `__file__` under the same runner: `python -c` puts the current
-     directory first on the import path, and a runner's own script, such as
-     `pytest`, does not.
-   - **Remove it** with `git worktree remove <path>`, adding `--force` if it
-     refuses over files your build wrote.
+   selection at the diff's base, in a second worktree added at `<base>` and
+   built as the first ([Where you run](#where-you-run)). A red test is not
+   automatically the author's. `<base>` is what the diff is measured against:
+   `HEAD` for the staged tree, and for a ref range its base
+   (`git merge-base A B` for `A...B`).
 7. **Premises outside this tree are claims.** What a vendor answers, what a
    caller in another repository sends, what a production row holds, what a
    deployed client still calls: nothing you can read here confirms or refutes it,

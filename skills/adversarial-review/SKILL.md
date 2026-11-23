@@ -153,16 +153,17 @@ what a reader would do.
 
 ## Prompt shape
 
-Give the reviewer the diff (`git diff --cached` or a ref range), a one-paragraph
-intent, the blast radius, the scope files to read (one for each kind of change
-the diff touches, such as frontend for a backend service's templates), the
-relevant ADRs, what you already ran with its counts, and a ranked attack list.
-Ask for `SHIP` / `FIX-FIRST` / `REWORK`, findings ranked by severity with
-`file:line` evidence, and a separate FILE THIS list. On a later round, say which
-round it is and what earlier rounds found, and tell it to re-derive rather than
-grade the fixes: a rewritten claim is not a verified one. Also list what earlier
-rounds verified by running it, and ask it to re-run a check only where the text
-around it changed, so the round spends its budget on what moved.
+Give the reviewer the diff (the staged tree or a ref range, not a diff file),
+a one-paragraph intent, the blast radius, the scope files to read (one for each
+kind of change the diff touches, such as frontend for a backend service's
+templates), the relevant ADRs, what you already ran with its counts, and a
+ranked attack list. Ask for `SHIP` / `FIX-FIRST` / `REWORK`, findings ranked by
+severity with `file:line` evidence, and a separate FILE THIS list. On a later
+round, say which round it is and what earlier rounds found, and tell it to
+re-derive rather than grade the fixes: a rewritten claim is not a verified one.
+Also list what earlier rounds verified by running it, and ask it to re-run a
+check only where the text around it changed, so the round spends its budget on
+what moved.
 
 **Pin what it reads.** Give the hash of each file under review (`git rev-parse
 :<path>` for a staged blob, `git hash-object <file>` otherwise) and ask the
@@ -172,11 +173,12 @@ through the author's own edit, turns its verdict into one about text nobody read
 **When the diff is documentation**, point the reviewer at the claims to verify,
 one by one, and tell it to skip rewordings that would merely read better.
 
-**Running rules live in the repository's review notes**: how to start the
-environment, how to run things, and what to leave alone, such as a shared build,
-a shared stack, a device or the user's own files. Every review reads them there.
-Where the notes lack a rule the review needs, put it in the prompt and add it to
-the notes, so the next prompt need not carry it.
+**Running rules live in the repository's review notes**: how to build the
+environment in the reviewer's own worktree, any file to copy into it and a
+fallback where that build fails, how to run things, and what to leave alone,
+such as a shared build, a shared stack, a device or the user's own files. Every
+review reads them there. Where the notes lack a rule the review needs, put it in
+the prompt and add it to the notes, so the next prompt need not carry it.
 
 ### Where the reviewer comes from
 
@@ -200,3 +202,9 @@ the notes, so the next prompt need not carry it.
   the round with what earlier rounds found, the file hashes, and the attack
   list. Without it the reviewer cannot tell an out-of-scope discovery from an
   in-scope defect, which is rule 2 failing before the review starts.
+
+  By default, Codex's read-only and workspace-write sandboxes refuse
+  `git worktree add`, which writes in `.git`. Where it is refused, a Codex
+  review reads rather than runs ([REVIEWER.md](REVIEWER.md#where-you-run)),
+  and its verdict says so. Read-only cannot save the snapshot either, and
+  needs none, since nothing it runs can write.
