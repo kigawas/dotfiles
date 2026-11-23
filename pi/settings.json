@@ -33,6 +33,8 @@
     "npm:pi-web-access@0.44.0",
     "npm:pi-subagents@0.81.0",
     "npm:pi-intercom@0.18.1",
-    "npm:@gridport/pi-extensions@0.1.0"
+    "npm:@gridport/pi-extensions@0.1.0",
+    "npm:pi-background@0.4.4",
+    "npm:pi-memory@0.4.2"
   ]
 }
