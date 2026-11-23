@@ -26,6 +26,9 @@
   "skills": [
     "-skills/code-review/SKILL.md"
   ],
+  "commandGuard": {
+    "allowFolders": ["__pycache__"]
+  },
   "packages": [
     "npm:pi-web-access@0.44.0",
     "npm:pi-subagents@0.81.0",
