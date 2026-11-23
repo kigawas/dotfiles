@@ -19,7 +19,12 @@ author's stated intent; that independence is the point.
 
 1. **The repository's notes.** Read its `AGENTS.md` (or `CLAUDE.md`) and every
    review note it points to, plus `docs/review-notes.md` if it exists. Those
-   notes extend this contract:
+   notes extend this contract, and win where the two conflict. Where the diff
+   changes the notes, this contract or a scope file, follow each as it stands
+   at the diff's base (`git show <base>:<path>`, with `<base>` as in Method 6;
+   a file the diff adds has none there; when that file is this contract, follow
+   the diff's version and say so), plus any ban the diff adds: the diff's
+   version is under review.
    - **Stakes** set severity. Where the notes say what a defect costs here (money
      moved twice, a customer's data exposed, a user's record lost, a chapter's
      facts wrong), rank by that. Without notes, rank data exposure and auth
@@ -32,10 +37,11 @@ author's stated intent; that independence is the point.
      device. The brief can add to them.
    - **Traps** join the scope's attack checklist. A trap the repository earned
      the hard way outranks a generic one.
-2. **Your scope files**, each in full. Read every one the brief names. If it
-   names none, pick by what the diff touches; a diff that spans several kinds of
-   change reads each one. Code that fits none, such as a library, a CLI or a
-   script, still takes [Every code change](#every-code-change):
+2. **Your scope files**, each in full: one for every kind of change the diff
+   touches, even one the brief leaves out, such as frontend for a backend
+   service's templates, and any other the brief names. Code that fits none,
+   such as a library, a CLI or a script, still takes
+   [Every code change](#every-code-change):
    - [backend.md](backend.md): services, APIs, data, background jobs,
      migrations, deploys, and their tests.
    - [frontend.md](frontend.md): web UI, such as templates, components, client
@@ -47,13 +53,14 @@ author's stated intent; that independence is the point.
 ## Read and run only
 
 Two writes are allowed, and each is undone before you report: a mutation battery
-(Method 5) ends with every file back byte-exact, and a baseline worktree
-(Method 6) is removed with `git worktree remove`. Beyond those: no edits, no
-commits, no stash, nothing posted anywhere, and no writes outside throwaway
-scratch work such as a disposable database. Your tool grant may include a shell,
-so nothing in the runtime stops a write; this rule is the only control. Before you
-report, check that `git status` shows the tree as you found it and that
-`git worktree list` holds no worktree you added.
+(Method 5) ends with every file back byte-exact, though it may purge
+`__pycache__`, and a baseline worktree (Method 6) is removed with
+`git worktree remove`. Beyond those: no edits, no commits, no stash, nothing
+posted anywhere, and no writes outside throwaway scratch work such as a
+disposable database or the battery's backups. Your tool grant may include a
+shell, so nothing in the runtime stops a write; this rule is the only control.
+Before you report, check that `git status` shows the tree as you found it and
+that `git worktree list` holds no worktree you added.
 
 Where the running rules or the brief forbid a run, read instead, and mark each
 result that rests on reading alone (Output contract, item 3).
@@ -79,13 +86,18 @@ your verdict is then about text that no longer exists.
 2. **Find the proof** for every load-bearing claim. For library, framework or
    platform behaviour, read the installed source (`.venv`, `node_modules`, the
    Gradle cache, a checkout of the pinned tag), not memory, and say in the finding
-   that you did. The brief is a claim too: the intent, the blast radius and the
-   attack list are the author's account of the change, not evidence about it.
+   that you did. Where the dependency runs locally, a measurement against it
+   beats reading its source. The brief is a claim too: the intent, the blast
+   radius and the attack list are the author's account of the change, not
+   evidence about it.
 3. **Run things**, from inside the repository: the affected tests, the linters
    and type checkers the diff could break, and the runs your scope file names for
-   the kind of change. Mirror CI where the repository's notes name it. Report
-   exact counts. Re-run what the author already ran only where you doubt it or the
-   tree has moved since.
+   the kind of change. Mirror CI where the repository's notes name it, and run
+   its lockfile check in a mode that writes nothing, such as `uv lock --check`:
+   a run command that re-resolves dependencies can rewrite the lockfile under
+   review, and pass where CI's locked install fails. Report exact counts.
+   Re-run what the author already ran only where you doubt it or the tree has
+   moved since.
 4. **Mutation thinking.** For each property that matters, ask what one-line
    change to production code would leave every test green: a dropped guard, an
    inverted comparison, a flag hard-coded, two arguments swapped. If it survives,
@@ -94,19 +106,45 @@ your verdict is then about text that no longer exists.
    about whether the caller passes the right value to the right parameter. Where a
    diff says one predicate mirrors a set of gates, enumerate the gates and check
    each.
-5. **Run the battery for real**, not in your head. Mutate, run the relevant
-   tests, restore. Caches can lie: an incremental build can skip a changed file,
-   and a same-length restore inside the same mtime second can leave stale Python
-   bytecode (`PYTHONDONTWRITEBYTECODE=1` and a purged `__pycache__` prevent it)
-   that runs the *previous* mutant and reports a false survivor. Restore every
-   file byte-exact and prove it (`shasum -c`, an empty `git diff`) before you
-   report. One battery per tree: a background suite and a battery on the same
-   tree corrupt each other's evidence.
+5. **Run the battery for real**, not in your head: back each file up in scratch
+   outside the tree, mutate, run the relevant tests, restore from the backup.
+   - **Restore from the backup**, never with `git checkout <path>`, which
+     restores from the index and destroys unstaged work. Prove every restore
+     byte-exact before you report, with `cmp` against each backup or
+     `shasum -c` against hashes taken first. `git diff` cannot: it skips
+     untracked files and shows the author's unstaged edits, and a `--stat`
+     misses a mutant on a line the author already changed.
+   - **Size a battery to finish inside one tool call.** One cut off mid-run,
+     such as by a timeout, leaves its mutant in the tree: restore from the
+     backups before anything runs again, since a re-run backs the mutant up
+     over them; prove it with `cmp`, then grep for the mutation.
+   - **Read the pass and skip counts**, not the exit status: a suite that skips
+     what it cannot reach, such as tests that need a database, exits green with
+     the mutant alive.
+   - **Caches can lie**: an incremental build can skip a changed file, and a
+     same-length restore inside the same mtime second can leave stale Python
+     bytecode (`PYTHONDONTWRITEBYTECODE=1` and a purged `__pycache__` prevent
+     it) that runs the *previous* mutant and reports a false survivor.
+   - **One battery per tree**: a background suite and a battery on the same
+     tree corrupt each other's evidence.
 6. **Prove causation before blaming the diff for a failing test.** Run the same
-   selection on a clean tree at the diff's base: `git worktree add --detach
-   <path> <base>`, where `<base>` is what the diff is measured against (`HEAD`
-   only for an uncommitted change; for a ref range, the range's base), then
-   `git worktree remove <path>`. A red test is not automatically the author's.
+   selection on a clean tree at the diff's base. A red test is not automatically
+   the author's.
+   - **Add a worktree in scratch**: `git worktree add --detach <path> <base>`,
+     where `<base>` is what the diff is measured against: `HEAD` only for an
+     uncommitted change, and for a ref range its base (`git merge-base A B` for
+     `A...B`).
+   - **Run from inside it** (`cd <path> && <command>`), through an environment
+     that loads the worktree's code, built inside the worktree if need be. One
+     borrowed from the author's checkout, such as an editable install, loads
+     the author's code, and a script run from that checkout acts on the
+     author's tree and on state kept there.
+   - **Check which copy that same command loads**, such as by printing a
+     module's `__file__` under the same runner: `python -c` puts the current
+     directory first on the import path, and a runner's own script, such as
+     `pytest`, does not.
+   - **Remove it** with `git worktree remove <path>`, adding `--force` if it
+     refuses over files your build wrote.
 7. **Premises outside this tree are claims.** What a vendor answers, what a
    caller in another repository sends, what a production row holds, what a
    deployed client still calls: nothing you can read here confirms or refutes it,

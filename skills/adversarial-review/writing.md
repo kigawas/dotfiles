@@ -13,7 +13,11 @@ library behaviour, `gh` for issues and PRs, the work itself at its page or URL
 for a historical or scholarly fact. A claim about how a tool behaves (git, gh, a
 package manager, a shell) is settled by running it in a scratch directory under
 `/tmp`, deleted afterwards, not by memory or its docs. Every cited test name must
-exist verbatim in the file it is cited under; script the check.
+be declared in the file it is cited under, on the line that defines it, such as
+`def <name>(`, `fun <name>(`, `func <name>(` or `it("<name>"`, in any of their
+variants, such as `async def`, a name in backticks, or a name nested in
+`describe` blocks: a name that merely appears there can be the prefix of a
+longer one, or sit in a comment. Script the check, anchored to the declaration.
 
 - **Sources**: read each source at the cited place, not a summary, a search
   snippet or memory. Use the repository's local copies first, then the web: a
@@ -30,6 +34,9 @@ exist verbatim in the file it is cited under; script the check.
 - **Details**: dates, numbers, names, titles and places, each against its
   source. A citation's author, title, imprint and pages match the volume actually
   consulted.
+- **Provenance**: verify first a claim carried in from outside the repository,
+  such as a past session, a hand-off note or someone's recollection: it is the
+  likeliest to have gone stale.
 - **Severity** is what the claim would cost if a reader acted on it, or if it
   went to print. A control described as stronger than it is, or a gap described
   as open when it is closed, is worse than no description, because the next
@@ -42,7 +49,10 @@ Skip rewordings that would merely read better.
 A skill or an `AGENTS.md` is followed literally, so its commands are claims too:
 
 - **Every command example obeys the document's own rules.** An example that
-  breaks a rule stated a few lines above is the one the agent copies.
+  breaks a rule stated a few lines above is the one the agent copies. Where two
+  rules each add a flag or variable to the same command, run it with both: a
+  tool can refuse the pair, or accept it and drop one, as
+  `uv run --no-sync --locked` passes a stale lock.
 - **Every command stands alone.** Check each for state it assumes from an earlier
   call, such as a working directory or an exported variable; an agent's shell
   tool may start a fresh shell per call.

@@ -26,6 +26,8 @@ Read it with [REVIEWER.md](REVIEWER.md), which it extends.
   workers on one row, and a lock taken where the backend ignores it.
 - **Money and other ledgers**: a write is proven by the exact change and by what
   must not move. Check rounding, precision, sign and currency.
+- **Pagination**: a list read that stops after the first page under-reports a
+  balance, a count or a reconciliation, and no error says so.
 - **Migrations**: rows that exist only after a post-migrate hook on a fresh
   database, the reverse operation, dependency pins, and agreement with any
   fixture that claims to be the source of truth.

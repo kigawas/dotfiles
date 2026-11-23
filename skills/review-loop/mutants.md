@@ -24,11 +24,11 @@ than a paraphrase of them.
   the verdict is about a mutant nobody chose.
 - **Before mutating**, check that each test the entry names still exists, such
   as `pytest --collect-only -q <ids>` exiting 0.
-- **For each mutant**, back the file up with `cp`, run its tests, restore the
-  file, and check the file's hash against the original. For Python, run with
-  `PYTHONDONTWRITEBYTECODE=1` after purging `__pycache__`: a stale `.pyc` runs
-  the *previous* mutant ([REVIEWER.md](../adversarial-review/REVIEWER.md),
-  method step 5).
+- **For each mutant**, back the file up with `cp` to scratch outside the tree,
+  apply the mutant, run its tests, restore the file, and check the file's hash
+  against the original. For Python, run with `PYTHONDONTWRITEBYTECODE=1` after
+  purging `__pycache__`: a stale `.pyc` runs the *previous* mutant
+  ([REVIEWER.md](../adversarial-review/REVIEWER.md), method step 5).
 - **A mutant is caught only when the runner reports failed tests, and a test the
   entry names fails with the failure the entry expects.** Anything else means a
   broken entry, not a kill:

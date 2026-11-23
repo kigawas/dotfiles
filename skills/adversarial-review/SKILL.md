@@ -154,15 +154,15 @@ what a reader would do.
 ## Prompt shape
 
 Give the reviewer the diff (`git diff --cached` or a ref range), a one-paragraph
-intent, the blast radius, the scope files to read (a diff that spans backend and
-frontend names both), the relevant ADRs, what you already ran with its counts,
-and a ranked attack list. Ask for `SHIP` / `FIX-FIRST` / `REWORK`, findings
-ranked by severity with `file:line` evidence, and a separate FILE THIS list. On
-a later round, say which round it is and what earlier rounds found, and tell it
-to re-derive rather than grade the fixes: a rewritten claim is not a verified
-one. Also list what earlier rounds
-verified by running it, and ask it to re-run a check only where the text around
-it changed, so the round spends its budget on what moved.
+intent, the blast radius, the scope files to read (one for each kind of change
+the diff touches, such as frontend for a backend service's templates), the
+relevant ADRs, what you already ran with its counts, and a ranked attack list.
+Ask for `SHIP` / `FIX-FIRST` / `REWORK`, findings ranked by severity with
+`file:line` evidence, and a separate FILE THIS list. On a later round, say which
+round it is and what earlier rounds found, and tell it to re-derive rather than
+grade the fixes: a rewritten claim is not a verified one. Also list what earlier
+rounds verified by running it, and ask it to re-run a check only where the text
+around it changed, so the round spends its budget on what moved.
 
 **Pin what it reads.** Give the hash of each file under review (`git rev-parse
 :<path>` for a staged blob, `git hash-object <file>` otherwise) and ask the
