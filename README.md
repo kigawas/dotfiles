@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal configuration for [pi](https://pi.dev) and [Claude Code](https://github.com/anthropics/claude-code) — plus shared skills for Antigravity (`agy`), global Git config, and helper scripts.
+Personal configuration for [pi](https://pi.dev), [Claude Code](https://github.com/anthropics/claude-code), and Antigravity (`agy`) — plus global Git config and helper scripts.
 
 ## Install
 
@@ -21,7 +21,7 @@ Passing no scope runs all four:
 | --- | --- | --- |
 | `claude` | `~/.claude/` | `CLAUDE.md` (`agents/AGENTS.md`), `commands/`, `agents/*`, and the subset of `skills/` listed in `CLAUDE_SKILLS` |
 | `pi` | `~/.pi/agent/` | `AGENTS.md`, `prompts/` (`commands/`), `mcp.json`, `extensions/*`, `agents/*` |
-| `gemini` | `~/.gemini/skills/` | All `skills/*/` (read by `agy`) |
+| `gemini` | `~/.gemini/` | `skills/*/` and `antigravity-cli/statusline.sh` (read by `agy`) |
 | `misc` | `~/.agents/skills/`, `~/.config/git/` | All `skills/*/`, `git/config`, `git/ignore` |
 
 ### Not linked
@@ -45,6 +45,7 @@ Passing no scope runs all four:
 
 - `claude/agents/`, `pi/agents/` — The `adversarial-reviewer` subagent, one file per tool.
 - `claude/settings.json`, `pi/settings.json` — Settings copies for Claude Code and pi.
+- `gemini/statusline.sh` — Status line script for `agy` (shows model, mode, context usage, and cache hit rate).
 - `pi/extensions/` — `zsh-bang` runs `!` and `!!` commands in zsh with `~/.zshrc`; `idle-compact` compacts a session after 55 minutes idle, before the 1-hour prompt cache expires.
 - `pi/mcp.json` — pi MCP servers (`@playwright/mcp`).
 

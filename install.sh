@@ -23,6 +23,7 @@
 #     pi/agents/<file>     -> ~/.pi/agent/agents/<file>       (one link per file)
 #   gemini: links into ~/.gemini, the folder agy shares
 #     skills/<name>/       -> ~/.gemini/skills/<name>         (one link per skill)
+#     gemini/statusline.sh -> ~/.gemini/antigravity-cli/statusline.sh
 #   misc: everything else
 #     skills/<name>/       -> ~/.agents/skills/<name>   (one link per skill; both
 #                             tools read them, and other skills there are left alone)
@@ -127,6 +128,7 @@ if in_scope gemini; then
     [ -d "$skill_dir" ] || continue
     link "${skill_dir%/}" "$HOME/.gemini/skills/$(basename "$skill_dir")"
   done
+  link "$REPO/gemini/statusline.sh" "$HOME/.gemini/antigravity-cli/statusline.sh"
 fi
 
 if in_scope misc; then
