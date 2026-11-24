@@ -11,7 +11,8 @@ Run `./install.sh --help` for the exact symlink map. Always run `./install.sh` a
 - `claude/settings.json` ↔ `~/.claude/settings.json`, **excluding `autoMode`** (which names private repos and stays in the live file only). After editing either file, verify with:
   `diff <(jq -S 'del(.autoMode)' ~/.claude/settings.json) <(jq -S . claude/settings.json)`
 - `pi/settings.json` ↔ `~/.pi/agent/settings.json`. Compare both after editing. Disabling a skill in `~/.agents/skills/` uses `-skills/<name>/SKILL.md` in `pi/settings.json` and `skillOverrides` in `claude/settings.json` — keep both aligned.
-- `gemini/settings.json` ↔ `~/.gemini/antigravity-cli/settings.json`, **keeping only `colorScheme` and `statusLine`** (other live settings stay in the live file only).
+- `gemini/settings.json` ↔ `~/.gemini/antigravity-cli/settings.json`, **keeping only `colorScheme` and `statusLine`**. The other live settings, such as `trustedWorkspaces` and `permissions`, name private folders and repos, so they stay in the live file only. After editing either file, verify with:
+  `diff <(jq -S '{colorScheme, statusLine}' ~/.gemini/antigravity-cli/settings.json) <(jq -S . gemini/settings.json)`
 - `agents/skill-lock.json` ← `~/.agents/.skill-lock.json`. Re-copy after installing or updating skills with `npx skills`. Keep every skill stored in `skills/` **out** of the lock, even an unchanged upstream copy (otherwise `npx skills update` deletes its symlink and overwrites it with upstream). Remove entries by editing the lock directly, since `npx skills remove` also deletes symlinks.
 
 ## Authoring conventions
