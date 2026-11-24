@@ -1,0 +1,7 @@
+{
+  "colorScheme": "tokyo night",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.gemini/antigravity-cli/statusline.sh"
+  }
+}

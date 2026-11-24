@@ -26,7 +26,7 @@ Passing no scope runs all four:
 
 ### Not linked
 
-- `claude/settings.json`, `pi/settings.json`, and `agents/skill-lock.json` are tracked as manual copies and kept in sync by hand.
+- `claude/settings.json`, `pi/settings.json`, `gemini/settings.json`, and `agents/skill-lock.json` are tracked as manual copies and kept in sync by hand.
 - The root `AGENTS.md` and `CLAUDE.md` are instructions for working on this repo and are not installed.
 
 ## What's here
@@ -44,7 +44,7 @@ Passing no scope runs all four:
 ### Tool-specific config
 
 - `claude/agents/`, `pi/agents/` — The `adversarial-reviewer` subagent, one file per tool.
-- `claude/settings.json`, `pi/settings.json` — Settings copies for Claude Code and pi.
+- `claude/settings.json`, `pi/settings.json`, `gemini/settings.json` — Settings copies for Claude Code, pi, and `agy`.
 - `gemini/statusline.sh` — Status line script for `agy` (shows model, mode, context usage, and cache hit rate).
 - `pi/extensions/` — `zsh-bang` runs `!` and `!!` commands in zsh with `~/.zshrc`; `idle-compact` compacts a session after 55 minutes idle, before the 1-hour prompt cache expires.
 - `pi/mcp.json` — pi MCP servers (`@playwright/mcp`).
