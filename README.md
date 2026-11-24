@@ -1,46 +1,68 @@
 # dotfiles
 
-My setup for two coding agents, [pi](https://pi.dev) and [Claude Code](https://github.com/anthropics/claude-code): shared instructions, skills, slash commands, subagents, pi extensions, settings, and the script that installs them.
+Personal configuration for [pi](https://pi.dev) and [Claude Code](https://github.com/anthropics/claude-code) — plus shared skills for Antigravity (`agy`), global Git config, and helper scripts.
 
 ## Install
 
 ```bash
-./install.sh              # dry run: prints what it would link, changes nothing
-./install.sh --apply      # makes the links
-./install.sh --apply pi   # only the links into ~/.pi/agent
+./install.sh                   # dry run: print planned links, change nothing
+./install.sh --apply           # create links for all scopes
+./install.sh --apply claude pi # create links for specific scopes
+./install.sh --help            # full list of links
 ```
 
-The scopes are `claude` (links into `~/.claude`), `pi` (into `~/.pi/agent`), `gemini` (the skills, into `~/.gemini/skills`, which agy reads) and `misc` (the shared skills and the git config). Without one, `install.sh` runs all four.
+`install.sh` is idempotent: links that already point to this repo are left alone, and any existing file or folder it would replace is moved to `~/.dotfiles-backup/<timestamp>/` first.
 
-`install.sh` links files from this repo into `~/.claude`, `~/.pi/agent`, `~/.gemini/skills`, `~/.agents/skills` and `~/.config/git`. It leaves a link that already points here alone, and moves a file it would replace to `~/.dotfiles-backup/<timestamp>/` first. Run `./install.sh --help` for the full list of links.
+### Scopes
 
-The settings files aren't linked. `claude/settings.json` and `pi/settings.json` are copies, kept in step with `~/.claude/settings.json` and `~/.pi/agent/settings.json` by hand.
+Passing no scope runs all four:
+
+| Scope | Target | What gets linked |
+| --- | --- | --- |
+| `claude` | `~/.claude/` | `CLAUDE.md` (`agents/AGENTS.md`), `commands/`, `agents/*`, and the subset of `skills/` listed in `CLAUDE_SKILLS` |
+| `pi` | `~/.pi/agent/` | `AGENTS.md`, `prompts/` (`commands/`), `mcp.json`, `extensions/*`, `agents/*` |
+| `gemini` | `~/.gemini/skills/` | All `skills/*/` (read by `agy`) |
+| `misc` | `~/.agents/skills/`, `~/.config/git/` | All `skills/*/`, `git/config`, `git/ignore` |
+
+### Not linked
+
+- `claude/settings.json`, `pi/settings.json`, and `agents/skill-lock.json` are tracked as manual copies and kept in sync by hand.
+- The root `AGENTS.md` and `CLAUDE.md` are instructions for working on this repo and are not installed.
 
 ## What's here
 
-| Path | What |
-| --- | --- |
-| `agents/AGENTS.md` | Instructions both agents read, linked as `~/.claude/CLAUDE.md` and `~/.pi/agent/AGENTS.md`. |
-| `skills/` | Skills: adversarial review, opening and clearing branches, working your own queue or reviewing others' PRs on a recurring trigger, writing PR bodies, writing tests, codebase design, domain modeling, grilling a plan, and writing for agents. |
-| `commands/` | Slash commands both agents read: `/commit`, `/ship`, `/merged`, `/fold`, `/clear-comments`. |
-| `claude/agents/`, `pi/agents/` | An adversarial-reviewer subagent, one file per tool. |
-| `pi/extensions/` | `zsh-bang` runs your own `!` commands in zsh with `~/.zshrc`; `idle-compact` compacts a session before its cache expires. |
-| `pi/mcp.json` | pi's MCP servers. |
-| `claude/settings.json`, `pi/settings.json` | The settings copies. |
-| `git/config` | Global git settings, linked as `~/.config/git/config`: the `lg` alias and the allowed-signers file for SSH signatures. |
-| `git/ignore` | Global gitignore, linked as `~/.config/git/ignore`: `.DS_Store`, Claude Code's local settings, logs and `.env` files. |
-| `agents/skill-lock.json` | The `npx skills` record of installed skills and their sources. |
-| `scripts/` | `git-sign.sh` sets up SSH commit signing in a repo; `check-pi-models.sh` checks pi's `models.json` after a provider update; `mobile-setup.sh` is the setup script for an Android cloud environment: it links these dotfiles and installs the Android SDK and Kotlin. |
+### Shared agent setup
 
-pi's `loop`, `secret-guard` and `command-guard` extensions are a separate package, [`@gridport/pi-extensions`](https://github.com/gridport/pi-extensions), pinned in `pi/settings.json`.
+- `agents/AGENTS.md` — Shared user instructions linked to Claude Code and pi.
+- `agents/skill-lock.json` — Copy of `~/.agents/.skill-lock.json` (`npx skills` lockfile).
+- `commands/` — Slash commands shared by both tools: `/commit`, `/fold`, `/ship`, `/merged`, `/clear-comments`.
+- `skills/` — Twelve skills, grouped by use:
+  - **Git & PR workflow**: `open-branch`, `pr`, `clear-branch`
+  - **Review & scheduled loops**: `adversarial-review`, `author-loop`, `review-loop`
+  - **Design, testing & writing**: `codebase-design`, `domain-modeling`, `improve-codebase-architecture`, `writing-tests`, `grilling`, `writing-for-agents`
 
-The root `AGENTS.md` is for agents working on this repo; it isn't installed.
+### Tool-specific config
+
+- `claude/agents/`, `pi/agents/` — The `adversarial-reviewer` subagent, one file per tool.
+- `claude/settings.json`, `pi/settings.json` — Settings copies for Claude Code and pi.
+- `pi/extensions/` — `zsh-bang` runs `!` and `!!` commands in zsh with `~/.zshrc`; `idle-compact` compacts a session after 55 minutes idle, before the 1-hour prompt cache expires.
+- `pi/mcp.json` — pi MCP servers (`@playwright/mcp`).
+
+pi's `loop`, `secret-guard`, and `command-guard` extensions live in a separate package, [`@gridport/pi-extensions`](https://github.com/gridport/pi-extensions), pinned in `pi/settings.json`.
+
+### Git & scripts
+
+- `git/config` — Global git settings (`~/.config/git/config`): the `lg` log alias and SSH `allowedSignersFile`.
+- `git/ignore` — Global gitignore (`~/.config/git/ignore`): `.DS_Store`, Claude Code local settings, `*.log`, and `*.env`.
+- `scripts/git-sign.sh` — Configures SSH commit signing in the current repo.
+- `scripts/check-pi-models.sh` — Checks or fixes `supportsMidConvoEffort` in `~/.pi/agent/models.json` after a provider catalog update.
+- `scripts/mobile-setup.sh` — Sets up an Android cloud environment: links these dotfiles and installs the Android SDK and Kotlin.
 
 ## Before you borrow
 
-- The model and provider settings are mine: pi reaches its models through [magpie](https://github.com/yetone/magpie). Use your own provider.
-- pi's `models.json` holds API keys, so it's never copied here.
+- Provider, model, and hook settings are personal: pi reaches its models through [magpie](https://github.com/yetone/magpie). Swap in your own provider and settings.
+- `~/.pi/agent/models.json` holds API keys and is never committed here.
 
 ## License
 
-MIT; see [LICENSE](LICENSE). Seven of the skills come from [mattpocock/skills](https://github.com/mattpocock/skills), also MIT; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+MIT; see [LICENSE](LICENSE). Seven of the skills come from [mattpocock/skills](https://github.com/mattpocock/skills), also MIT (`skills/pr` also adapts HumanLayer's `show-me` skill); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

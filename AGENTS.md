@@ -1,33 +1,33 @@
 # Dotfiles repo instructions
 
-This repo holds Ryan's personal config: shared agent instructions, skills, pi settings, and the install and helper scripts. It's public on GitHub.
+Personal dotfiles for Claude Code, pi, Antigravity (`agy`), and Git. This repository is **public on GitHub**.
 
-## Layout
+Run `./install.sh --help` for the exact symlink map. Always run `./install.sh` as a dry run first, and ask before running `./install.sh --apply`.
 
-- `agents/AGENTS.md`: shared user instructions. `install.sh` links it to `~/.claude/CLAUDE.md` and `~/.pi/agent/AGENTS.md`. Keep it tool-neutral. Ask before changing it.
-- `agents/skill-lock.json`: a copy of `~/.agents/.skill-lock.json`, the `npx skills` record of installed skills and their sources. Nothing links it. Copy it again after installing or updating skills. A skill kept in `skills/` stays out of the lock, even an unchanged upstream copy: `npx skills update` would delete its link and copy upstream's version in. Take it out by editing the lock, since `npx skills remove` also deletes the links.
-- `skills/<name>/`: skills, each linked into `~/.agents/skills/` one at a time, and into `~/.gemini/skills/`, where agy reads them.
-- `claude/settings.json`: a copy of `~/.claude/settings.json`, minus its `autoMode` block, which names private repos and stays in the live file only. Nothing links it. When you change one, change the other, then compare them with `diff <(jq -S 'del(.autoMode)' ~/.claude/settings.json) <(jq -S . claude/settings.json)`.
-- `claude/agents/`, `pi/agents/`: user-level subagents, each file linked into `~/.claude/agents/` or `~/.pi/agent/agents/`. One agent has a file in each, since the two tools name tools and models differently. Keep both thin: point at a skill's file for the substance.
-- General skills replace copies kept in several repos. Repository details stay in the repository: commands and policy in its `AGENTS.md`, review stakes, traps and running rules in `docs/review-notes.md`.
-- Same-name precedence differs by tool. A repository's own agent overrides the user-level one in both. For skills, pi prefers the repository's copy, but Claude Code prefers the personal one in `~/.claude/skills/`. So link a general skill into `~/.claude/skills/` only after the repositories' own copies are removed. `install.sh` links the skills named in its `CLAUDE_SKILLS` there. `writing-tests` is linked there by choice while some repositories keep their own `tdd`, so Claude Code loads both in those.
-- `commands/`: slash commands shared by both tools. `install.sh` links the folder to `~/.claude/commands` and `~/.pi/agent/prompts`. Use only frontmatter and placeholders both read: `description`, `argument-hint`, `$ARGUMENTS`.
-- `pi/settings.json`: a copy of `~/.pi/agent/settings.json`. Nothing links it. When you change one, change the other and compare them. Its `skills` entries such as `-skills/code-review/SKILL.md` turn off skills from `~/.agents/skills/`, matching `skillOverrides` in `claude/settings.json`.
-- `pi/mcp.json`: user-level MCP servers, linked to `~/.pi/agent/mcp.json`. Pin each server's package version.
-- `pi/extensions/`: pi extensions, each file linked into `~/.pi/agent/extensions/`.
-- `loop`, `secret-guard` and `command-guard` come from the npm package `@gridport/pi-extensions`, pinned in `pi/settings.json`'s `packages`. Change them in its repo, `~/works/js/pi-extensions`. After it releases, move the pin in both settings files.
-- `git/config`: global git settings, linked to `~/.config/git/config`, which git reads before `~/.gitconfig`. Settings that belong to one machine, such as user and credential helpers, stay in `~/.gitconfig`.
-- `git/ignore`: the global gitignore, linked to `~/.config/git/ignore`. Only files no repo should commit go here; language and build output stay in each repo's `.gitignore`.
-- `.pi/settings.json`: project settings for this repo only.
-- `scripts/`: helper scripts.
+## Synced copies (not symlinked)
 
-## Rules
+`install.sh` leaves these files alone; keep each repo copy and live file in sync by hand:
 
-- Never copy `~/.pi/agent/models.json` into this repo. It holds API keys.
-- Everything committed here is public. Before committing, check that the diff names no private repo, work project or private folder.
-- Run `./install.sh` as a dry run. Ask before running `./install.sh --apply`.
-- Stage with explicit paths: `git add -- <path>`. Never use `git add -A`.
-- Commit messages use `[Tag]: summary`, such as `[Pi]`, `[Agents]`, or `[Scripts]`.
-- Don't push unless asked.
-- The remote is `kigawas/dotfiles`. Run `gh` as `kigawas`, without switching accounts: `GH_TOKEN=$(gh auth token --user kigawas) gh ...`.
-- Pin third-party pi packages to exact versions, and review their source before installing.
+- `claude/settings.json` ↔ `~/.claude/settings.json`, **excluding `autoMode`** (which names private repos and stays in the live file only). After editing either file, verify with:
+  `diff <(jq -S 'del(.autoMode)' ~/.claude/settings.json) <(jq -S . claude/settings.json)`
+- `pi/settings.json` ↔ `~/.pi/agent/settings.json`. Compare both after editing. Disabling a skill in `~/.agents/skills/` uses `-skills/<name>/SKILL.md` in `pi/settings.json` and `skillOverrides` in `claude/settings.json` — keep both aligned.
+- `agents/skill-lock.json` ← `~/.agents/.skill-lock.json`. Re-copy after installing or updating skills with `npx skills`. Keep every skill stored in `skills/` **out** of the lock, even an unchanged upstream copy (otherwise `npx skills update` deletes its symlink and overwrites it with upstream). Remove entries by editing the lock directly, since `npx skills remove` also deletes symlinks.
+
+## Authoring conventions
+
+- **Shared instructions (`agents/AGENTS.md`)**: Keep tool-neutral. Ask before changing it.
+- **Skills (`skills/<name>/`)**: General skills replace per-repo copies. Keep repository-specific details in each repo (`AGENTS.md` for commands and policy; `docs/review-notes.md` for review stakes, traps, and running rules).
+- **Skill and agent precedence**: A repo's own subagent overrides the user-level copy in both tools. For skills, pi prefers the repo copy, while Claude Code prefers `~/.claude/skills/`. Add a skill to `CLAUDE_SKILLS` in `install.sh` only after repos' own same-name copies are removed (`writing-tests` is an intentional exception while some repos still keep `tdd`, so Claude Code loads both there).
+- **Subagents (`claude/agents/`, `pi/agents/`)**: Maintain one file per tool since tool and model names differ. Keep both thin and point to a skill file for the substance.
+- **Commands (`commands/`)**: Shared by Claude Code and pi. Use only frontmatter and placeholders both support: `description`, `argument-hint`, `$ARGUMENTS`.
+- **Pi packages and MCP (`pi/settings.json`, `pi/mcp.json`)**: Pin third-party pi packages and MCP servers to exact versions, and review their source before installing.
+- **`@gridport/pi-extensions`**: `loop`, `secret-guard`, and `command-guard` live in the separate `gridport/pi-extensions` repo. Edit them there; after a release, bump the version pin in both `pi/settings.json` and `~/.pi/agent/settings.json`.
+- **Git (`git/config`, `git/ignore`)**: Keep machine-specific settings (user identity, credential helpers) in `~/.gitconfig`, and language or build ignores in each repo's `.gitignore`.
+
+## Security and Git workflow
+
+- **Public repo check**: Keep `~/.pi/agent/models.json` out of this repo (never copy it here — it holds API keys). Before committing, check the diff to confirm it names no private repo, work project, or local/private folder.
+- **Staging**: Stage explicit paths with `git add -- <path>` (never `git add -A`).
+- **Commits**: Use `[Tag]: summary`, such as `[Pi]`, `[Agents]`, `[Skills]`, or `[Scripts]`.
+- **Pushing**: Do not push unless asked.
+- **GitHub CLI**: The remote is `kigawas/dotfiles`. Run `gh` as `kigawas` without switching accounts: `GH_TOKEN=$(gh auth token --user kigawas) gh ...`.
